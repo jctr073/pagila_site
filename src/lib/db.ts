@@ -1,4 +1,10 @@
-import { Pool, type QueryResult, type QueryResultRow } from "pg";
+import { Pool, types, type QueryResult, type QueryResultRow } from "pg";
+
+// Postgres OID 1700 = numeric. By default `pg` returns numeric columns as JS
+// strings to preserve precision; the Pagila numeric columns (rental_rate,
+// replacement_cost, payment.amount) fit comfortably in a JS number, so parse
+// them up-front. ESM/CJS module-once semantics ensure this runs only once.
+types.setTypeParser(1700, (value: string) => parseFloat(value));
 
 declare global {
   var pagilaPgPool: Pool | undefined;

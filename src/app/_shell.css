@@ -1,0 +1,382 @@
+/* =========================================================================
+ * _shell.css — admin shell layout (Sidebar + Topbar + main content).
+ *
+ * Ported from design_handoff_pagila_admin/designs/shell.jsx. Tokens
+ * (--sidebar-w, --header-h, --bg, --surface, --border, --accent, etc.)
+ * come from globals.css.
+ *
+ * Imported from src/app/globals.css after _design.css.
+ * ========================================================================= */
+
+/* -- Shell grid ---------------------------------------------------------- */
+.pa-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.pa-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.pa-content {
+  flex: 1;
+  min-width: 0;
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pa-page-pad {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* -- Common page heading ------------------------------------------------- */
+.pa-h1 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  line-height: 1.2;
+  margin: 0;
+}
+.pa-muted {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* -- Sidebar ------------------------------------------------------------- */
+.pa-sidebar {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 14px 10px 12px;
+  gap: 14px;
+}
+
+.pa-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 6px;
+}
+.pa-brand-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent) 0%, oklch(0.7 0.14 60) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 2px 6px -1px var(--accent-soft-border);
+}
+.pa-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.pa-brand-name {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}
+.pa-brand-sub {
+  font-size: 10.5px;
+  color: var(--text-soft);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Store picker */
+.pa-side-store-wrap {
+  position: relative;
+}
+.pa-side-store {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: border-color 0.12s, background 0.12s;
+}
+.pa-side-store:hover {
+  border-color: var(--border-strong);
+}
+.pa-side-store .lbl {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.pa-side-store .lbl b {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pa-side-store .lbl span {
+  font-size: 10.5px;
+  color: var(--text-soft);
+  font-weight: 500;
+}
+
+.pa-side-store-pop {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+}
+.pa-side-store-opt {
+  text-align: left;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  font-size: 12.5px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.pa-side-store-opt:hover {
+  background: var(--surface-2);
+}
+
+/* Popover backdrop — shared with UserMenu */
+.pa-popover-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: transparent;
+  border: 0;
+  cursor: default;
+}
+
+/* Nav */
+.pa-side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pa-side-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.pa-side-group {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  padding: 6px 10px 4px;
+}
+.pa-side-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+.pa-side-item:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.pa-side-item.is-active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.pa-side-item.is-active::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent);
+}
+
+/* Footer */
+.pa-side-foot {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pa-side-version {
+  font-size: 10.5px;
+  color: var(--text-soft);
+  letter-spacing: 0.02em;
+  padding: 4px 10px;
+  font-family: var(--font-mono, ui-monospace);
+}
+
+/* -- Topbar -------------------------------------------------------------- */
+.pa-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  height: var(--header-h);
+  padding: 0 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.pa-crumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  min-width: 0;
+}
+.pa-crumb b {
+  color: var(--text);
+  font-weight: 600;
+}
+.pa-crumb-seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pa-crumb-sep {
+  color: var(--text-soft);
+}
+
+.pa-topbar-search {
+  display: flex;
+  justify-content: flex-start;
+  max-width: 320px;
+  min-width: 0;
+}
+
+.pa-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pa-topbar-rule {
+  width: 1px;
+  height: 22px;
+  background: var(--border);
+}
+
+/* -- UserMenu ------------------------------------------------------------ */
+.pa-usermenu {
+  position: relative;
+}
+.pa-usermenu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  line-height: 0;
+}
+.pa-usermenu-trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.pa-usermenu-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  min-width: 200px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+}
+.pa-usermenu-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  font-size: 12.5px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.pa-usermenu-item b {
+  font-weight: 600;
+  color: var(--accent);
+  margin-left: auto;
+}
+.pa-usermenu-item:hover {
+  background: var(--surface-2);
+}
+.pa-usermenu-item.is-danger {
+  color: var(--danger);
+}
+.pa-usermenu-item.is-danger:hover {
+  background: var(--danger-soft);
+}
+.pa-usermenu-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
