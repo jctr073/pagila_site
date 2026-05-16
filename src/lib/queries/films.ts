@@ -91,7 +91,7 @@ export async function listFilms(
       f.length           AS length,
       f.rental_rate      AS rate,
       f.replacement_cost AS replace,
-      lang.name          AS lang,
+      trim(lang.name)    AS lang,
       f.last_update      AS updated,
       f.special_features AS features,
       (SELECT count(*) FROM film_actor fa WHERE fa.film_id = f.film_id)::int AS actors,
@@ -177,9 +177,9 @@ export async function getFilm(id: number): Promise<FilmDetail | null> {
       f.special_features   AS features,
       cat.name             AS category,
       cat.category_id      AS category_id,
-      lang.name            AS lang,
+      trim(lang.name)      AS lang,
       lang.language_id     AS language_id,
-      ol.name              AS original_lang,
+      trim(ol.name)        AS original_lang,
       ol.language_id       AS original_language_id
     FROM film f
     JOIN film_category fc ON fc.film_id = f.film_id
