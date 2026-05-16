@@ -1,4 +1,4 @@
-import { afterAll, beforeAll } from "vitest";
+import { afterAll, beforeAll, beforeEach } from "vitest";
 
 import { closePool, query } from "@/lib/db";
 
@@ -47,6 +47,35 @@ async function waitForTestDatabase() {
   );
 }
 
+async function ensureCurrentPaymentPartition() {
+  await query(`
+    CREATE TABLE IF NOT EXISTS public.payment_default
+    PARTITION OF public.payment DEFAULT
+  `);
+}
+
+async function resetTestData() {
+  await query(`
+    TRUNCATE TABLE
+      public.payment,
+      public.rental,
+      public.inventory,
+      public.film_actor,
+      public.film_category,
+      public.film,
+      public.actor,
+      public.customer,
+      public.staff,
+      public.store,
+      public.address,
+      public.city,
+      public.country,
+      public.category,
+      public.language
+    RESTART IDENTITY CASCADE
+  `);
+}
+
 function formatError(error: unknown): string {
   if (error instanceof AggregateError) {
     return error.errors.map(formatError).join("; ");
@@ -63,6 +92,11 @@ assertTestDatabaseUrl(process.env.DATABASE_URL);
 
 beforeAll(async () => {
   await waitForTestDatabase();
+  await ensureCurrentPaymentPartition();
+});
+
+beforeEach(async () => {
+  await resetTestData();
 });
 
 afterAll(async () => {
