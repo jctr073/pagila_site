@@ -25,6 +25,7 @@ import Chip from "@/components/ui/Chip";
 import Icon from "@/components/ui/Icon";
 import Rating from "@/components/ui/Rating";
 import Sparkline from "@/components/ui/Sparkline";
+import { storeLabel } from "@/lib/storeLabels";
 import type {
   FilmCastMember,
   FilmDetail,
@@ -32,12 +33,6 @@ import type {
 } from "@/lib/types";
 
 import DrawerCloseButton from "./DrawerCloseButton";
-
-// Pagila has exactly two stores; this matches the design copy.
-const STORE_LABELS: Record<number, { name: string; tone: "accent" | "teal" }> = {
-  1: { name: "Lethbridge", tone: "accent" },
-  2: { name: "Woodridge", tone: "teal" },
-};
 
 export type FilmDrawerProps = {
   film: FilmDetail;
@@ -190,6 +185,15 @@ export default function FilmDrawer({
         <section className="drw-sec">
           <h4>
             Inventory <span className="pill">{totalUnits} units</span>
+            <Link
+              href={`/films/${film.id}/add-inventory`}
+              aria-label="Add stock"
+              style={{ marginLeft: "auto" }}
+            >
+              <Btn size="sm" variant="ghost" leftIcon="plus">
+                Add stock
+              </Btn>
+            </Link>
           </h4>
           <div className="drw-inv">
             <div className="drw-inv-row">
@@ -198,10 +202,7 @@ export default function FilmDrawer({
               <div>Out</div>
             </div>
             {inventory.map((row) => {
-              const meta = STORE_LABELS[row.store_id] ?? {
-                name: `Store #${row.store_id}`,
-                tone: "accent" as const,
-              };
+              const meta = storeLabel(row.store_id);
               return (
                 <div key={row.store_id} className="drw-inv-row">
                   <div>
