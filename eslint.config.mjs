@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Design reference — JSX prototypes that share globals via a single
+    // <script> tag in Pagila Admin.html. They're not production code,
+    // not bundled, and intentionally violate the "no implicit globals"
+    // rule. See design_handoff_pagila_admin/README.md §10.
+    "design_handoff_pagila_admin/**",
   ]),
 ]);
 

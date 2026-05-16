@@ -1,0 +1,351 @@
+/* =========================================================================
+ * _films.css — Films list screen.
+ *
+ * Ported from design_handoff_pagila_admin/designs/films-list.jsx (FILMS_CSS
+ * constant). Selectors mirror the design verbatim — components in
+ * src/components/films stamp them out as-is. .fl-stockbar already lives in
+ * _design.css from Phase 2.
+ *
+ * Tokens (--accent, --surface, --border, --row-h, --cell-px, etc.) come
+ * from globals.css. Imported from globals.css after _dashboard.css.
+ * ========================================================================= */
+
+/* -- Toolbar ----------------------------------------------------------- */
+.fl-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.fl-toolbar .sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 2px;
+}
+.fl-toolbar .grow {
+  flex: 1;
+}
+
+/* Pill-count badge layered on a filter Btn (Category / Rating / Length). */
+.fl-pill-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* Popover container shared by toolbar filters + bulkbar "Set category". */
+.fl-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 200px;
+  max-height: 320px;
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 6px;
+  z-index: 20;
+}
+.fl-popover button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+.fl-popover button:hover {
+  background: var(--surface-2);
+}
+.fl-popover button[data-on="1"] {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+.fl-popover-wrap {
+  position: relative;
+}
+
+/* -- Bulk bar ---------------------------------------------------------- */
+.fl-bulkbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  font-size: 12.5px;
+}
+.fl-bulkbar .pa-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.fl-bulkbar .pa-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.fl-bulkbar .pa-btn[data-variant="danger-ghost"] {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.fl-bulkbar .sep {
+  background: rgba(255, 255, 255, 0.25);
+  width: 1px;
+  height: 18px;
+}
+.fl-bulkbar .clearx {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  cursor: pointer;
+}
+.fl-bulkbar .clearx:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* -- Table ------------------------------------------------------------- */
+.fl-tablewrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.fl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.fl-table thead th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 10px var(--cell-px);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.fl-table thead th .colhead {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+}
+.fl-table thead th .colhead:hover {
+  color: var(--text);
+}
+.fl-table thead th .colhead[data-active="1"] {
+  color: var(--text);
+}
+.fl-table tbody td {
+  padding: 0 var(--cell-px);
+  height: var(--row-h);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.fl-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.fl-table tbody tr {
+  transition: background 0.08s;
+}
+.fl-table tbody tr:hover {
+  background: var(--surface-2);
+}
+.fl-table tbody tr.is-selected {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 0 var(--accent);
+}
+.fl-table tbody tr.is-selected:hover {
+  background: oklch(from var(--accent-soft) calc(l - 0.02) c h);
+}
+
+/* Row link wrapper — keep the Link visually invisible. */
+.fl-rowlink {
+  display: contents;
+  color: inherit;
+}
+
+/* -- Title cell -------------------------------------------------------- */
+.fl-titlecell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.fl-poster {
+  width: 28px;
+  height: 38px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    var(--surface-3) 0%,
+    var(--surface-2) 100%
+  );
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft);
+  font-family: var(--font-mono, ui-monospace);
+  font-size: 9px;
+}
+.fl-poster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0 4px,
+    rgba(0, 0, 0, 0.04) 4px 5px
+  );
+}
+.fl-titlecell .ttl {
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+}
+.fl-titlecell .meta {
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+.fl-id {
+  font-family: var(--font-mono, ui-monospace);
+  font-size: 11.5px;
+  color: var(--text-soft);
+}
+
+/* -- Inline edit cell -------------------------------------------------- */
+.fl-edit-cell {
+  width: 100%;
+  height: calc(var(--row-h) - 8px);
+  border: 1px solid var(--accent);
+  background: var(--surface);
+  border-radius: 5px;
+  padding: 0 6px;
+  font: inherit;
+  color: inherit;
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.fl-edit-cell.mono {
+  font-family: var(--font-mono, ui-monospace);
+}
+
+.fl-cell-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: text;
+  font: inherit;
+  color: inherit;
+}
+
+.fl-cat-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+/* -- Footer / pagination ---------------------------------------------- */
+.fl-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.fl-foot .pager {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.fl-pgbtn,
+.fl-pag-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 12px;
+  padding: 0;
+}
+.fl-pgbtn:hover,
+.fl-pag-btn:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.fl-pgbtn.is-active,
+.fl-pgbtn[data-active="1"],
+.fl-pag-btn.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.fl-pgbtn[aria-disabled="true"],
+.fl-pag-btn[aria-disabled="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.fl-pgbtn.ellipsis,
+.fl-pag-btn.ellipsis {
+  border-color: transparent;
+  background: transparent;
+  cursor: default;
+}

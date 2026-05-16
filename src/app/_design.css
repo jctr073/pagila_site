@@ -1,0 +1,443 @@
+/* Component CSS ported from design_handoff_pagila_admin/designs/primitives.jsx
+ * and films-list.jsx (StockBar). Selectors are kept verbatim so the components
+ * in src/components/ui can stamp them out exactly as the design specifies.
+ *
+ * Tokens (--bg, --surface, --accent, etc.) come from globals.css.
+ */
+
+/* ── Btn ──────────────────────────────────────────────────────────────── */
+.pa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, box-shadow 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+.pa-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+}
+.pa-btn:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.pa-btn[data-variant="primary"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.pa-btn[data-variant="primary"]:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+.pa-btn[data-variant="ghost"] {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+}
+.pa-btn[data-variant="ghost"]:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.pa-btn[data-variant="danger-ghost"] {
+  background: transparent;
+  border-color: transparent;
+  color: var(--danger);
+}
+.pa-btn[data-variant="danger-ghost"]:hover {
+  background: var(--danger-soft);
+}
+.pa-btn[data-size="sm"] {
+  height: 26px;
+  padding: 0 9px;
+  font-size: 12px;
+  border-radius: 6px;
+  gap: 5px;
+}
+.pa-btn[data-size="lg"] {
+  height: 38px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+.pa-btn[data-icon-only="1"] {
+  padding: 0;
+  width: 32px;
+  justify-content: center;
+}
+.pa-btn[data-size="sm"][data-icon-only="1"] {
+  width: 26px;
+}
+.pa-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Input ────────────────────────────────────────────────────────────── */
+.pa-input {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 10px;
+  gap: 6px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--text);
+  transition: border-color 0.12s, box-shadow 0.12s, background 0.12s;
+}
+.pa-input:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.pa-input input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+}
+.pa-input input::placeholder {
+  color: var(--text-soft);
+}
+.pa-input[data-size="sm"] {
+  height: 26px;
+  font-size: 12px;
+  padding: 0 8px;
+  gap: 5px;
+}
+.pa-input-icon {
+  color: var(--text-soft);
+  flex-shrink: 0;
+  display: inline-flex;
+}
+
+/* ── Chip ─────────────────────────────────────────────────────────────── */
+.pa-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.pa-chip.solid {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-soft-border);
+}
+.pa-chip.teal {
+  background: var(--teal-soft);
+  color: var(--teal);
+  border-color: transparent;
+}
+.pa-chip.success {
+  background: var(--success-soft);
+  color: var(--success);
+  border-color: transparent;
+}
+.pa-chip.warning {
+  background: var(--warning-soft);
+  color: var(--warning);
+  border-color: transparent;
+}
+.pa-chip.danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-color: transparent;
+}
+.pa-chip.violet {
+  background: var(--violet-soft);
+  color: var(--violet);
+  border-color: transparent;
+}
+.pa-chip .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+/* ── Rating pill ──────────────────────────────────────────────────────── */
+.pa-rating {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border: 1px solid;
+  font-family: var(--font-mono);
+}
+
+/* ── Avatar ───────────────────────────────────────────────────────────── */
+.pa-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.pa-avatar[data-tone="teal"] {
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+.pa-avatar[data-tone="violet"] {
+  background: var(--violet-soft);
+  color: var(--violet);
+}
+.pa-avatar[data-tone="accent"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.pa-avatar[data-tone="success"] {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+/* ── Keyboard hint ────────────────────────────────────────────────────── */
+.pa-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  font: 500 11px var(--font-mono);
+  color: var(--text-muted);
+}
+
+/* ── Card / divider / link ────────────────────────────────────────────── */
+.pa-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.pa-divider {
+  height: 1px;
+  background: var(--border);
+  border: 0;
+}
+.pa-vrule {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+}
+.pa-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+.pa-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Check (tri-state) ────────────────────────────────────────────────── */
+.pa-check {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+  flex-shrink: 0;
+  padding: 0;
+}
+.pa-check:hover {
+  border-color: var(--accent);
+}
+.pa-check:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.pa-check[data-on="1"] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.pa-check[data-on="1"] svg {
+  color: #fff;
+}
+.pa-check[data-mixed="1"] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.pa-check[data-mixed="1"]::after {
+  content: "";
+  width: 7px;
+  height: 1.5px;
+  background: #fff;
+  border-radius: 1px;
+}
+
+/* ── StockBar (from films-list.jsx) ───────────────────────────────────── */
+.fl-stockbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.fl-stockbar .bar {
+  width: 40px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  overflow: hidden;
+  position: relative;
+}
+.fl-stockbar .bar i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--success);
+}
+.fl-stockbar.lo .bar i {
+  background: var(--warning);
+}
+.fl-stockbar.crit .bar i {
+  background: var(--danger);
+}
+.fl-stockbar.lo {
+  color: var(--warning);
+}
+.fl-stockbar.crit {
+  color: var(--danger);
+}
+
+/* ── Skeleton (Phase 11 loading.tsx files) ────────────────────────────── */
+.pa-skel {
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  animation: pa-skel-pulse 1.4s ease-in-out infinite;
+}
+.pa-skel-line {
+  height: 10px;
+}
+.pa-skel-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.pa-skel-grid {
+  display: grid;
+  gap: 14px;
+}
+@keyframes pa-skel-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* ── Error card (Phase 11 error.tsx files) ────────────────────────────── */
+.pa-error {
+  padding: 20px;
+  border-left: 4px solid var(--danger);
+}
+.pa-error h2 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--danger);
+}
+.pa-error p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.pa-error .pa-error-code {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-soft);
+  margin-top: 8px;
+  word-break: break-all;
+}
+
+/* ── Toaster ──────────────────────────────────────────────────────────── */
+.pa-toaster {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.pa-toast {
+  pointer-events: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text);
+  min-width: 220px;
+  max-width: 320px;
+  animation: pa-toast-in 160ms ease-out;
+}
+.pa-toast[data-tone="success"] {
+  border-left-color: var(--success);
+}
+.pa-toast[data-tone="error"] {
+  border-left-color: var(--danger);
+}
+.pa-toast[data-tone="info"] {
+  border-left-color: var(--teal);
+}
+@keyframes pa-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

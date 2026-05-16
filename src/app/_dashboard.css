@@ -1,0 +1,328 @@
+/* =========================================================================
+ * _dashboard.css — Dashboard screen ("/").
+ *
+ * Ported from design_handoff_pagila_admin/designs/dashboard.jsx (DASH_CSS
+ * constant) and the page-header rules from designs/shell.jsx. Selectors
+ * mirror the design verbatim — components in src/components/dashboard
+ * stamp them out as-is.
+ *
+ * Tokens (--accent, --surface, --border, --text, etc.) come from
+ * globals.css. Do NOT hardcode colors here.
+ *
+ * Imported from src/app/globals.css after _design.css and _shell.css.
+ * ========================================================================= */
+
+/* -- Page header (greeting + actions) ----------------------------------- */
+.pa-page-h {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+.pa-page-h .ttl {
+  flex: 1;
+  min-width: 0;
+}
+.pa-page-h h1 {
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  margin: 0;
+}
+.pa-page-h p {
+  color: var(--text-muted);
+  margin: 4px 0 0;
+  font-size: 13px;
+}
+.pa-page-h .actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* -- KPI row ------------------------------------------------------------ */
+.db-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.db-kpi {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.db-kpi .lbl {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.db-kpi .lbl .ico {
+  color: var(--text-soft);
+}
+.db-kpi-num,
+.db-kpi .val {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.db-kpi .val .unit {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-soft);
+  margin-left: 2px;
+  font-family: var(--font-mono, ui-monospace);
+}
+.db-kpi .row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+.db-kpi-delta,
+.db-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: var(--font-mono, ui-monospace);
+}
+.db-kpi-delta.up,
+.db-delta.up {
+  color: var(--success);
+}
+.db-kpi-delta.down,
+.db-delta.down {
+  color: var(--danger);
+}
+.db-kpi-delta .ago,
+.db-delta .ago {
+  color: var(--text-soft);
+  margin-left: 4px;
+  font-weight: 500;
+}
+
+/* -- 2-column row (chart | side stack) ---------------------------------- */
+.db-row,
+.db-cols {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.db-side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+}
+
+/* -- Section header (used by chart, top films, activity cards) ---------- */
+.db-section-h {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px 8px;
+}
+.db-section-h h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+.db-section-h .sub {
+  font-size: 11.5px;
+  color: var(--text-soft);
+}
+.db-section-h .spacer {
+  flex: 1;
+}
+
+/* -- Rentals bar chart -------------------------------------------------- */
+.db-chart {
+  padding: 14px 16px;
+}
+.db-chart .axis {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 6px;
+  font-size: 10.5px;
+  color: var(--text-soft);
+  font-family: var(--font-mono, ui-monospace);
+}
+.db-bars {
+  display: grid;
+  gap: 4px;
+  height: 130px;
+  align-items: end;
+}
+.db-bar {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-soft-border);
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  min-height: 2px;
+}
+.db-bar--today {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.db-bar--future {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--surface-2) 0 4px,
+    transparent 4px 8px
+  );
+  border-style: dashed;
+}
+
+/* -- 2×2 mini-tiles below the chart ------------------------------------- */
+.db-tiles,
+.db-tilegrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+}
+.db-tile {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+}
+.db-tile:nth-child(odd) {
+  border-right: 1px solid var(--border);
+}
+.db-tile:nth-child(-n + 2) {
+  border-top: 0;
+}
+.db-tile .num {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.db-tile .num .unit {
+  font-size: 11px;
+  color: var(--text-soft);
+  font-weight: 500;
+  margin-left: 3px;
+}
+.db-tile .lbl {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.db-tile .num.warn {
+  color: var(--warning);
+}
+
+/* -- Top films list ----------------------------------------------------- */
+.db-top {
+  display: flex;
+  flex-direction: column;
+}
+.db-list {
+  display: flex;
+  flex-direction: column;
+}
+.db-top-row,
+.db-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+}
+.db-top-row:hover,
+.db-list-item:hover {
+  background: var(--surface-2);
+}
+.db-top-row .rank,
+.db-list-item .rank {
+  font-family: var(--font-mono, ui-monospace);
+  color: var(--text-soft);
+  width: 18px;
+  flex-shrink: 0;
+}
+.db-top-row .ttl,
+.db-list-item .ttl {
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.db-top-row .meta,
+.db-list-item .meta {
+  color: var(--text-soft);
+  font-size: 11.5px;
+  font-family: var(--font-mono, ui-monospace);
+}
+
+/* -- Activity feed ------------------------------------------------------ */
+.db-actv {
+  display: flex;
+  flex-direction: column;
+}
+.db-feed {
+  display: flex;
+  flex-direction: column;
+}
+.db-actv-row,
+.db-feed-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  align-items: flex-start;
+}
+.db-actv-row .dot,
+.db-feed-item .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.db-dot--accent {
+  background: var(--accent);
+}
+.db-dot--teal,
+.db-feed-item .dot.teal {
+  background: var(--teal);
+}
+.db-dot--success,
+.db-feed-item .dot.success {
+  background: var(--success);
+}
+.db-dot--warning,
+.db-feed-item .dot.warning {
+  background: var(--warning);
+}
+.db-actv-row .body,
+.db-feed-item .body {
+  flex: 1;
+  min-width: 0;
+}
+.db-actv-row .body b,
+.db-feed-item .body b {
+  font-weight: 600;
+}
+.db-actv-row .time,
+.db-feed-item .time {
+  color: var(--text-soft);
+  font-size: 11px;
+  font-family: var(--font-mono, ui-monospace);
+  flex-shrink: 0;
+}
