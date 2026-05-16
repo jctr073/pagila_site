@@ -7,10 +7,20 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "npm run test:unit",
+    "test:unit": "vitest run --config vitest.unit.config.mts",
+    "test:unit:watch": "vitest --config vitest.unit.config.mts",
+    "test:integration": "vitest run --config vitest.integration.config.mts",
+    "test:integration:watch": "vitest --config vitest.integration.config.mts",
+    "test:all": "npm run test:unit && npm run test:integration",
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f postgres",
-    "db:psql": "docker compose exec postgres psql -U postgres -d pagila"
+    "db:psql": "docker compose exec postgres psql -U postgres -d pagila",
+    "db:test:up": "docker compose up -d postgres-test",
+    "db:test:down": "docker compose stop postgres-test",
+    "db:test:logs": "docker compose logs -f postgres-test",
+    "db:test:psql": "docker compose exec postgres-test psql -U postgres -d pagila_test"
   },
   "engines": {
     "node": ">=24.15.0",
@@ -24,14 +34,19 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^24.12.4",
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "jsdom": "^29.1.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.6"
   },
   "overrides": {
     "next": {

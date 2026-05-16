@@ -36,3 +36,10 @@ export function query<T extends QueryResultRow = QueryResultRow>(
 ): Promise<QueryResult<T>> {
   return getPool().query<T>(text, params);
 }
+
+export async function closePool(): Promise<void> {
+  if (!globalThis.pagilaPgPool) return;
+
+  await globalThis.pagilaPgPool.end();
+  globalThis.pagilaPgPool = undefined;
+}

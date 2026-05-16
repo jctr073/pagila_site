@@ -41,6 +41,9 @@ npm run dev
 Open http://localhost:3000 and check the database route at
 http://localhost:3000/api/health.
 
+VS Code's `Next.js: debug website` launch configuration pins
+`DATABASE_URL` to the development database on `localhost:5432`.
+
 ## Project Structure
 
 ```text
@@ -230,10 +233,38 @@ npm run db:psql
 npm run db:down
 ```
 
+## Testing
+
+Unit tests run with Vitest and do not connect to Postgres:
+
+```bash
+npm run test:unit
+npm run test:unit:watch
+```
+
+Integration tests run against a separate Postgres container on port `5433`.
+The test database is named `pagila_test` and is initialized from the
+schema-only dump in `db/schema.sql`, so development data from
+`localhost:5432/pagila` is not copied or queried by tests. The default test
+connection string is `postgresql://postgres:postgres@127.0.0.1:5433/pagila_test`.
+
+```bash
+npm run db:test:up
+npm run test:integration
+npm run db:test:down
+```
+
+`TEST_DATABASE_URL` can override the integration test host or credentials, but
+it must still connect to the `pagila_test` database; the setup refuses to run
+otherwise.
+
 ## Verification
 
 ```bash
 npm run lint
+npm run test:unit
+npm run db:test:up
+npm run test:integration
 npm run build
 npm audit
 ```
