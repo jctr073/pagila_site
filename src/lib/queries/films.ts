@@ -216,6 +216,7 @@ export async function getFilm(id: number): Promise<FilmDetail | null> {
 
 export async function getFilmInventoryByStore(
   id: number,
+  excludeEmpty = false,
 ): Promise<FilmInventoryByStore[]> {
   const sql = `
     SELECT s.store_id,
@@ -225,6 +226,7 @@ export async function getFilmInventoryByStore(
     LEFT JOIN inventory i ON i.store_id = s.store_id AND i.film_id = $1
     LEFT JOIN rental r    ON r.inventory_id = i.inventory_id
     GROUP BY s.store_id
+    ${excludeEmpty ? "HAVING count(i.inventory_id) >= 1" : ""}
     ORDER BY s.store_id
   `;
   const { rows } = await query<FilmInventoryByStore>(sql, [id]);

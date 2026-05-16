@@ -38,7 +38,7 @@ export default async function InterceptedDrawer({
 
   const [film, inventory, cast, perf, sparks] = await Promise.all([
     getFilm(filmId),
-    getFilmInventoryByStore(filmId),
+    getFilmInventoryByStore(filmId, true),
     getFilmCast(filmId),
     getFilm30dPerformance(filmId),
     getFilmDemandSparklines([filmId]),
