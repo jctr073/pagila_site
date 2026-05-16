@@ -60,9 +60,11 @@ src/
         page.tsx               Films list route at /films
         [id]/page.tsx          Standalone film detail route
         [id]/edit/page.tsx     Standalone film edit route
+        [id]/add-inventory/    Standalone add-stock route
         @drawer/default.tsx    Empty drawer slot for /films
         @drawer/(.)[id]/       Intercepted drawer route
         @drawer/(.)[id]/edit/  Intercepted edit modal route
+        @drawer/(.)[id]/add-inventory/  Intercepted add-stock modal route
       stores/page.tsx          Stores and staff route at /stores
       categories/page.tsx      Placeholder route at /categories
     api/health/route.ts        Database health JSON endpoint
@@ -130,6 +132,11 @@ Films are the most route-rich section.
 - Client navigation to `/films/[id]/edit` uses
   `@drawer/(.)[id]/edit/page.tsx` and renders `FilmEditModalShell` plus
   `FilmEditForm`.
+- `/films/[id]/add-inventory` hard loads render `StandaloneAddInventoryPage`.
+- Client navigation to `/films/[id]/add-inventory` uses
+  `@drawer/(.)[id]/add-inventory/page.tsx` and renders `FilmEditModalShell`
+  plus `FilmAddInventoryForm`. The form inserts one `inventory` row per
+  unit per selected store in a single transaction.
 
 ## Code Organization
 
@@ -147,6 +154,7 @@ app DTOs from `src/lib/types.ts`.
   `getFilmCast`, `getFilm30dPerformance`, `getFilmDemandSparklines`,
   `updateFilmRate`, `updateFilmCategory`, `updateFilm`, `bulkSetCategory`,
   `bulkArchiveFilms`.
+- `inventory.ts`: `listStoresLite`, `addFilmInventory`.
 - `stores.ts`: `listStores`, `listStaff`.
 - `lookups.ts`: `listCategories`, `listLanguages`.
 
@@ -156,6 +164,7 @@ query layer, and revalidates affected paths.
 - `films.ts`: `updateRate`, `updateCategory`, `bulkSetCategory`,
   `bulkArchive`, `updateFilm`, `updateRateFormAction`,
   `updateCategoryFormAction`.
+- `inventory.ts`: `addFilmInventory`.
 - `preferences.ts`: `setTheme`, `setDensity`.
 
 Database access is centralized in `src/lib/db.ts`:
@@ -181,8 +190,9 @@ Frequently touched constants and helpers:
   protect dynamic SQL ordering.
 - `VALID_SORTS` and `VALID_RATINGS` in `src/app/(admin)/films/page.tsx`
   validate URL params before they reach the query layer.
-- `STORE_LABELS` in `FilmDrawer.tsx` maps Pagila store IDs to display names and
-  tones.
+- `STORE_LABELS` and the `storeLabel(id)` helper in `src/lib/storeLabels.ts`
+  map Pagila store IDs to display names and tones; `FilmDrawer` and
+  `FilmAddInventoryForm` both consume it.
 - `FEATURE_OPTIONS` and `RATING_OPTIONS` in `FilmEditForm.tsx` drive edit form
   controls.
 - `THEME_COOKIE`, `DENSITY_COOKIE`, `DEFAULT_THEME`, and `DEFAULT_DENSITY` in
