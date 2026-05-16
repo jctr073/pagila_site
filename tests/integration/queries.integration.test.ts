@@ -208,8 +208,8 @@ describe("query integration", () => {
     });
 
     await expect(getFilmInventoryByStore(1)).resolves.toEqual([
-      { store_id: 1, units: 2, out: 1 },
-      { store_id: 2, units: 1, out: 0 },
+      { store_id: 1, city: "Toronto", units: 2, out: 1 },
+      { store_id: 2, city: "Seattle", units: 1, out: 0 },
     ]);
     await expect(getFilmInventoryByStore(3, true)).resolves.toEqual([]);
 

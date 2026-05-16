@@ -60,6 +60,7 @@ export type FilmDetail = {
 /** Per-store inventory rollup for a single film (§7.2). */
 export type FilmInventoryByStore = {
   store_id: number;
+  city: string;
   units: number;
   out: number;
 };
