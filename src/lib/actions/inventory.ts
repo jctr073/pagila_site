@@ -37,14 +37,17 @@ export async function addFilmInventory(
       return { ok: false, error: "invalid items" };
     }
 
-    // Filter: keep only entries with a positive integer store_id and a
-    // positive integer unit count within the cap. Collapse duplicate
-    // store_ids by summing their units — friendlier than rejecting.
+    // Filter: keep only entries with an integer store_id and a positive
+    // integer unit count within the cap. store_id = 0 is a legitimate
+    // primary key in Pagila — only `inventory.store_id` having a matching
+    // row in `store` matters; the FK enforces that at insert time.
+    // Collapse duplicate store_ids by summing their units — friendlier
+    // than rejecting.
     const merged = new Map<number, number>();
     for (const raw of items) {
       const storeId = Number(raw?.storeId);
       const units = Number(raw?.units);
-      if (!Number.isInteger(storeId) || storeId <= 0) continue;
+      if (!Number.isInteger(storeId)) continue;
       if (!Number.isInteger(units) || units <= 0) continue;
       const capped = Math.min(units, MAX_UNITS_PER_STORE);
       merged.set(storeId, (merged.get(storeId) ?? 0) + capped);
