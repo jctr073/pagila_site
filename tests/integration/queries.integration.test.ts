@@ -24,7 +24,14 @@ import {
   updateFilmRate,
 } from "@/lib/queries/films";
 import { listCategories, listLanguages } from "@/lib/queries/lookups";
-import { listStaff, listStores } from "@/lib/queries/stores";
+import {
+  getStoreDetail,
+  getStoreRentalSparkline,
+  listCustomersByStore,
+  listStaff,
+  listStores,
+  listStoresForTable,
+} from "@/lib/queries/stores";
 
 describe("query integration", () => {
   it("lists lookup rows in display order", async () => {
@@ -103,6 +110,185 @@ describe("query integration", () => {
     await expect(listStaff({ storeId: 2 })).resolves.toEqual([
       expect.objectContaining({ id: 2, role: "Manager", store: 2 }),
       expect.objectContaining({ id: 4, role: "Clerk", store: 2 }),
+    ]);
+  });
+
+  it("lists enriched stores for the table with sortable columns and per-store customer counts", async () => {
+    await seedBaseCatalog();
+
+    const byId = await listStoresForTable();
+    expect(byId).toHaveLength(2);
+    expect(byId[0]).toMatchObject({
+      id: 1,
+      address: "100 King St",
+      address2: null,
+      district: "Ontario",
+      postal: "M5V",
+      city: "Toronto",
+      country: "Canada",
+      countryCode: "CA",
+      phone: "111-1111",
+      manager: "Ada Manager",
+      managerEmail: "ada@example.com",
+      managerId: 1,
+      inventory: 2,
+      activeRentals: 0,
+      staff: 2,
+      customers: 1,
+    });
+    expect(byId[1]).toMatchObject({
+      id: 2,
+      city: "Seattle",
+      country: "USA",
+      // "USA" is not in the explicit country-code map; the helper falls
+      // back to the first two letters uppercased.
+      countryCode: "US",
+      customers: 1,
+    });
+
+    const byCity = await listStoresForTable({ sort: "city", dir: "asc" });
+    expect(byCity.map((s) => s.city)).toEqual(["Seattle", "Toronto"]);
+
+    const byCustomersDesc = await listStoresForTable({
+      sort: "customers",
+      dir: "desc",
+    });
+    // Both stores have one customer; the tiebreaker is id ASC.
+    expect(byCustomersDesc.map((s) => s.id)).toEqual([1, 2]);
+
+    // Unknown sort keys must not blow up; they fall back to id but
+    // still honor the requested direction.
+    const fallback = await listStoresForTable({
+      sort: "bogus" as never,
+      dir: "desc",
+    });
+    expect(fallback.map((s) => s.id)).toEqual([2, 1]);
+  });
+
+  it("loads a single store with the 7-day rental count and an ISO opened date", async () => {
+    await seedBaseCatalog();
+    // Inventory 1 + 2 belong to store 1; inventory 3 + 4 belong to store 2.
+    await insertRental({ id: 1, inventoryId: 1, rentedDaysAgo: 0, staffId: 1 });
+    await insertRental({ id: 2, inventoryId: 2, rentedDaysAgo: 5, staffId: 1 });
+    // Eight days ago — outside the 7-day window.
+    await insertRental({ id: 3, inventoryId: 1, rentedDaysAgo: 8, staffId: 1 });
+    // Belongs to store 2 — must not be counted toward store 1's rentals7d.
+    await insertRental({
+      id: 4,
+      inventoryId: 3,
+      customerId: 2,
+      rentedDaysAgo: 1,
+      staffId: 2,
+    });
+
+    await expect(getStoreDetail(999)).resolves.toBeNull();
+
+    const store1 = await getStoreDetail(1);
+    expect(store1).toMatchObject({
+      id: 1,
+      address: "100 King St",
+      district: "Ontario",
+      postal: "M5V",
+      city: "Toronto",
+      country: "Canada",
+      countryCode: "CA",
+      manager: "Ada Manager",
+      inventory: 2,
+      staff: 2,
+      customers: 1,
+      rentals7d: 2,
+    });
+    expect(store1?.opened).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("orders customers by most recent rental and respects the limit", async () => {
+    await seedBaseCatalog();
+    // Add three more customers at store 1 so we can exercise ordering + limit.
+    await query(`
+      INSERT INTO public.customer (
+        customer_id,
+        store_id,
+        first_name,
+        last_name,
+        email,
+        address_id,
+        active
+      )
+      VALUES
+        (3, 1, 'Pat',  'Recent',  'pat@example.com', 1, 1),
+        (4, 1, 'Sam',  'NoRents', 'sam@example.com', 1, 1),
+        (5, 1, 'Lee',  'Older',   'lee@example.com', 1, 1);
+    `);
+    // Inventory 1 is at store 1.
+    await insertRental({
+      id: 1,
+      inventoryId: 1,
+      customerId: 1,
+      rentedDaysAgo: 5,
+      staffId: 1,
+    });
+    await insertRental({
+      id: 2,
+      inventoryId: 1,
+      customerId: 3,
+      rentedDaysAgo: 1,
+      staffId: 1,
+    });
+    await insertRental({
+      id: 3,
+      inventoryId: 1,
+      customerId: 5,
+      rentedDaysAgo: 10,
+      staffId: 1,
+    });
+
+    const all = await listCustomersByStore(1);
+    // Pat (1d) → Casey (5d) → Lee (10d) → Sam (no rentals, last by id ASC).
+    expect(all.map((c) => c.id)).toEqual([3, 1, 5, 4]);
+    expect(all.find((c) => c.id === 3)).toMatchObject({
+      rentals: 1,
+      active: true,
+    });
+    expect(all.find((c) => c.id === 4)).toMatchObject({
+      rentals: 0,
+      lastRented: null,
+      active: true,
+    });
+
+    const limited = await listCustomersByStore(1, 2);
+    expect(limited.map((c) => c.id)).toEqual([3, 1]);
+
+    // Store 2 still has its single seeded customer with no rentals.
+    await expect(listCustomersByStore(2)).resolves.toEqual([
+      expect.objectContaining({ id: 2, rentals: 0, lastRented: null }),
+    ]);
+  });
+
+  it("returns a 7-bucket rentals sparkline filling zero-rental days for the store", async () => {
+    await seedBaseCatalog();
+    // Two rentals today + one two days ago at store 1.
+    await insertRental({ id: 1, inventoryId: 1, rentedDaysAgo: 0, staffId: 1 });
+    await insertRental({ id: 2, inventoryId: 2, rentedDaysAgo: 0, staffId: 1 });
+    await insertRental({ id: 3, inventoryId: 1, rentedDaysAgo: 2, staffId: 1 });
+    // One rental yesterday at store 2 — must not leak into store 1.
+    await insertRental({
+      id: 4,
+      inventoryId: 3,
+      customerId: 2,
+      rentedDaysAgo: 1,
+      staffId: 2,
+    });
+
+    // Buckets are oldest-first: [6d, 5d, 4d, 3d, 2d, 1d, 0d].
+    await expect(getStoreRentalSparkline(1)).resolves.toEqual([
+      0, 0, 0, 0, 1, 0, 2,
+    ]);
+    await expect(getStoreRentalSparkline(2)).resolves.toEqual([
+      0, 0, 0, 0, 0, 1, 0,
+    ]);
+    // A store with no rentals still produces 7 zero buckets.
+    await expect(getStoreRentalSparkline(999)).resolves.toEqual([
+      0, 0, 0, 0, 0, 0, 0,
     ]);
   });
 
@@ -208,8 +394,8 @@ describe("query integration", () => {
     });
 
     await expect(getFilmInventoryByStore(1)).resolves.toEqual([
-      { store_id: 1, units: 2, out: 1 },
-      { store_id: 2, units: 1, out: 0 },
+      { store_id: 1, city: "Toronto", units: 2, out: 1 },
+      { store_id: 2, city: "Seattle", units: 1, out: 0 },
     ]);
     await expect(getFilmInventoryByStore(3, true)).resolves.toEqual([]);
 

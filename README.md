@@ -65,7 +65,12 @@ src/
         @drawer/(.)[id]/       Intercepted drawer route
         @drawer/(.)[id]/edit/  Intercepted edit modal route
         @drawer/(.)[id]/add-inventory/  Intercepted add-stock modal route
-      stores/page.tsx          Stores and staff route at /stores
+      stores/
+        layout.tsx             Stores list plus @drawer parallel slot
+        page.tsx               Stores list route at /stores
+        [id]/page.tsx          Standalone store detail route
+        @drawer/default.tsx    Empty drawer slot for /stores
+        @drawer/(.)[id]/       Intercepted store drawer route
       categories/page.tsx      Placeholder route at /categories
     api/health/route.ts        Database health JSON endpoint
     sandbox/page.tsx           Local sandbox route
@@ -74,7 +79,8 @@ src/
     dashboard/                 Dashboard display components
     films/                     Films table, toolbar, footer, inline edits
     films/detail/              Drawer, edit modal, edit form, shells
-    stores/                    Store cards, staff tabs, filters, table
+    stores/                    Stores table, toolbar, footer, bulk bar
+    stores/detail/             Drawer, drawer shell, standalone wrapper
     ui/                        Shared primitives and tiny visualizations
   lib/
     db.ts                      Postgres pool and typed query helper
@@ -155,7 +161,8 @@ app DTOs from `src/lib/types.ts`.
   `updateFilmRate`, `updateFilmCategory`, `updateFilm`, `bulkSetCategory`,
   `bulkArchiveFilms`.
 - `inventory.ts`: `listStoresLite`, `addFilmInventory`.
-- `stores.ts`: `listStores`, `listStaff`.
+- `stores.ts`: `listStores`, `listStoresForTable`, `listStaff`,
+  `getStoreDetail`, `listCustomersByStore`, `getStoreRentalSparkline`.
 - `lookups.ts`: `listCategories`, `listLanguages`.
 
 The server action layer in `src/lib/actions` validates action input, calls the
@@ -216,8 +223,9 @@ Dashboard components are re-exported from `src/components/dashboard/index.ts`:
 `ActivityFeed`.
 
 Stores components are re-exported from `src/components/stores/index.ts`:
-`StoresPage`, `StoresHeader`, `StoreCard`, `StaffTabs`, `StaffFilters`, and
-`StaffTable`.
+`StoresHeader`, `StoresPage`, `StoresToolbar`, `StoresBulkBar`,
+`StoresTable`, `StoresFooter`, `StoreDrawer`, `StoreDrawerShell`, and
+`StandaloneStoreDrawerPage`.
 
 ## Styling
 
@@ -249,6 +257,7 @@ Unit tests run with Vitest and do not connect to Postgres:
 
 ```bash
 npm run test:unit
+npm run test:unit:coverage
 npm run test:unit:watch
 ```
 
@@ -261,8 +270,12 @@ connection string is `postgresql://postgres:postgres@127.0.0.1:5433/pagila_test`
 ```bash
 npm run db:test:up
 npm run test:integration
+npm run test:integration:coverage
 npm run db:test:down
 ```
+
+Coverage reports are written to `coverage/unit` and `coverage/integration`.
+Run `npm run test:coverage` after starting the test database to generate both.
 
 `TEST_DATABASE_URL` can override the integration test host or credentials, but
 it must still connect to the `pagila_test` database; the setup refuses to run

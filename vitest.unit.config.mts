@@ -16,5 +16,18 @@ export default defineConfig({
       "node_modules",
       ".next",
     ],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html", "lcov", "json-summary"],
+      reportsDirectory: "./coverage/unit",
+      reportOnFailure: true,
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/test/**",
+        "src/**/*.test.{ts,tsx}",
+        "src/**/*.spec.{ts,tsx}",
+        "src/**/*.integration.{test,spec}.{ts,tsx}",
+      ],
+    },
   },
 });

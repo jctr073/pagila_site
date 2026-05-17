@@ -14,5 +14,18 @@ export default defineConfig({
     fileParallelism: false,
     hookTimeout: 30_000,
     testTimeout: 30_000,
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html", "lcov", "json-summary"],
+      reportsDirectory: "./coverage/integration",
+      reportOnFailure: true,
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/test/**",
+        "src/**/*.test.{ts,tsx}",
+        "src/**/*.spec.{ts,tsx}",
+        "src/**/*.integration.{test,spec}.{ts,tsx}",
+      ],
+    },
   },
 });

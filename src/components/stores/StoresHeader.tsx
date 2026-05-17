@@ -1,40 +1,46 @@
 import { Btn } from "@/components/ui";
 
 /**
- * StoresHeader — page heading for /stores.
+ * Page heading for `/stores`. Mirrors the films header layout — title,
+ * one-line summary of rollups, and a right-hand actions cluster.
  *
- * Server-renderable; no client hooks. Mirrors the `pa-page-h` block
- * from design_handoff_pagila_admin/designs/stores-staff.jsx (header
- * with title + sub + two action buttons on the right).
- *
- * The "Add staff member" button is a stub for Phase 9 — a full modal
- * (intercepting route at /stores/staff/new) is out of scope here.
+ * Ported from designs/stores-staff.jsx#StoresArtboard's `pa-page-h`
+ * block. The grid/list toggle and "Import CSV" buttons are presentation
+ * stubs for parity with Films; wiring is out of scope.
  */
 export type StoresHeaderProps = {
   storeCount: number;
   staffCount: number;
+  customerCount: number;
 };
 
 export default function StoresHeader({
   storeCount,
   staffCount,
+  customerCount,
 }: StoresHeaderProps) {
   return (
     <div className="pa-page-h">
       <div className="ttl">
         <h1>Stores &amp; Staff</h1>
         <p>
-          {storeCount} stores &middot; {staffCount} staff members &middot; synced
-          live across both locations
+          {storeCount.toLocaleString()} stores ·{" "}
+          {staffCount.toLocaleString()} staff members ·{" "}
+          {customerCount.toLocaleString()} customers · synced live
         </p>
       </div>
       <div className="actions">
         <Btn size="sm" variant="ghost" leftIcon="upload">
-          Export staff
+          Import CSV
         </Btn>
-        <Btn size="sm" leftIcon="plus" variant="primary">
-          Add staff member
-        </Btn>
+        <Btn
+          size="sm"
+          leftIcon="grid"
+          variant="ghost"
+          iconOnly
+          aria-label="Grid view"
+        />
+        <Btn size="sm" leftIcon="list" iconOnly aria-label="List view" />
       </div>
     </div>
   );

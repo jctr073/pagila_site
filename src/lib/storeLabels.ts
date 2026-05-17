@@ -1,11 +1,12 @@
 /**
- * Shared display metadata for stores. Pagila ships with exactly two stores
- * (Lethbridge and Woodridge); the design pins specific names + accent tones
- * to each so both the film drawer's inventory table and the "Add stock"
- * modal stay visually consistent.
+ * Shared display metadata for stores. The label is derived from the
+ * store's city plus its numeric id (e.g. "Woodridge #2") so any store
+ * — including ones added after the canonical Pagila seed — gets a
+ * meaningful name without a hardcoded lookup table.
  *
- * Callers should fall back to `Store #${id}` (tone `accent`) when an id is
- * absent from this map — see <FilmDrawer> for the canonical fallback.
+ * Tone alternates by id parity (odd → accent, even → teal) so the two
+ * shipped Pagila stores keep their original colors (Lethbridge #1 =
+ * accent, Woodridge #2 = teal).
  */
 
 export type StoreTone = "accent" | "teal";
@@ -15,11 +16,14 @@ export type StoreLabel = {
   tone: StoreTone;
 };
 
-export const STORE_LABELS: Record<number, StoreLabel> = {
-  1: { name: "Lethbridge", tone: "accent" },
-  2: { name: "Woodridge", tone: "teal" },
+export type StoreLabelInput = {
+  id: number;
+  city: string | null | undefined;
 };
 
-export function storeLabel(storeId: number): StoreLabel {
-  return STORE_LABELS[storeId] ?? { name: `Store #${storeId}`, tone: "accent" };
+export function storeLabel({ id, city }: StoreLabelInput): StoreLabel {
+  const trimmed = city?.trim();
+  const name = trimmed ? `${trimmed} #${id}` : `Store #${id}`;
+  const tone: StoreTone = id % 2 === 0 ? "teal" : "accent";
+  return { name, tone };
 }

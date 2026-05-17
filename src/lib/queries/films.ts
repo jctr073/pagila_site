@@ -220,12 +220,15 @@ export async function getFilmInventoryByStore(
 ): Promise<FilmInventoryByStore[]> {
   const sql = `
     SELECT s.store_id,
+           c.city AS city,
            count(i.inventory_id)::int AS units,
            count(r.rental_id) FILTER (WHERE r.return_date IS NULL)::int AS out
     FROM store s
+    JOIN address a ON a.address_id = s.address_id
+    JOIN city c    ON c.city_id    = a.city_id
     LEFT JOIN inventory i ON i.store_id = s.store_id AND i.film_id = $1
     LEFT JOIN rental r    ON r.inventory_id = i.inventory_id
-    GROUP BY s.store_id
+    GROUP BY s.store_id, c.city
     ${excludeEmpty ? "HAVING count(i.inventory_id) >= 1" : ""}
     ORDER BY s.store_id
   `;
