@@ -16,7 +16,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
-      - run: npm run test:unit
+      - run: npm run test:unit:coverage
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-unit
+          path: coverage/unit
+          if-no-files-found: ignore
 
   integration:
     name: Integration
@@ -29,6 +35,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run db:test:up
-      - run: npm run test:integration
+      - run: npm run test:integration:coverage
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-integration
+          path: coverage/integration
+          if-no-files-found: ignore
       - if: always()
         run: docker compose logs postgres-test

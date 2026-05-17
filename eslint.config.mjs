@@ -11,6 +11,7 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "coverage/**",
     "next-env.d.ts",
     // Design reference — JSX prototypes that share globals via a single
     // <script> tag in Pagila Admin.html. They're not production code,

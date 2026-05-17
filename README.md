@@ -249,6 +249,7 @@ Unit tests run with Vitest and do not connect to Postgres:
 
 ```bash
 npm run test:unit
+npm run test:unit:coverage
 npm run test:unit:watch
 ```
 
@@ -261,8 +262,12 @@ connection string is `postgresql://postgres:postgres@127.0.0.1:5433/pagila_test`
 ```bash
 npm run db:test:up
 npm run test:integration
+npm run test:integration:coverage
 npm run db:test:down
 ```
+
+Coverage reports are written to `coverage/unit` and `coverage/integration`.
+Run `npm run test:coverage` after starting the test database to generate both.
 
 `TEST_DATABASE_URL` can override the integration test host or credentials, but
 it must still connect to the `pagila_test` database; the setup refuses to run
