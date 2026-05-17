@@ -1,348 +1,275 @@
 /* =========================================================================
- * _stores.css — Stores & Staff screen ("/stores").
+ * _stores.css — Stores list (table) + store-detail drawer styles.
  *
- * Ported from design_handoff_pagila_admin/designs/stores-staff.jsx
- * (STORES_CSS constant) and section header rules. Class names mirror the
- * design verbatim — components in src/components/stores stamp them out
- * as-is.
+ * Ported from designs/stores-staff.jsx (STORES_CSS constant). The shared
+ * table chrome reuses `.fl-*` from _films.css and the drawer chrome
+ * reuses `.drw-*` from _film-detail.css — only store-specific cells and
+ * the drawer's manager card / staff chips / customer mini-table get
+ * their own classes here.
  *
- * Tokens (--accent, --teal, --surface, --border, --text, etc.) come from
- * globals.css. No hardcoded colors.
- *
- * Imported from src/app/globals.css after _dashboard.css.
+ * Tokens (--accent, --teal, --violet, --success, --border, --surface,
+ * etc.) come from globals.css. No hardcoded colors.
  * ========================================================================= */
 
-/* -- Two-column grid of store cards ------------------------------------- */
-.st-cards-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-/* -- Store card --------------------------------------------------------- */
-.st-card {
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 8px colored ribbon sitting flush against the top-left of the card.
- * Modifier classes select the tone — never hardcode the color. */
-.st-ribbon {
-  position: absolute;
-  top: -2px;
-  left: 20px;
-  width: 56px;
-  height: 8px;
-  border-radius: 0 0 4px 4px;
-  background: var(--accent);
-}
-.st-ribbon--accent {
-  background: var(--accent);
-}
-.st-ribbon--teal {
-  background: var(--teal);
-}
-
-/* -- Card header (avatar + title + Open chip) --------------------------- */
-.st-head {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-.st-head-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 18px;
-  flex-shrink: 0;
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-.st-head-avatar[data-tone="teal"] {
-  background: var(--teal-soft);
-  color: var(--teal);
-}
-.st-head-body {
-  flex: 1;
-  min-width: 0;
-}
-.st-head-id {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-soft);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-}
-.st-head-title {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.015em;
-  margin: 1px 0 0;
-}
-.st-head-addr {
-  font-size: 12.5px;
-  color: var(--text-muted);
-  margin-top: 3px;
-}
-
-/* -- Stat strip (3-col bordered group) ---------------------------------- */
-.st-strip {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-}
-.st-strip-cell {
-  padding: 12px 14px;
-}
-.st-strip-cell + .st-strip-cell {
-  border-left: 1px solid var(--border);
-}
-.st-strip-cell .lbl {
-  font-size: 10.5px;
-  color: var(--text-soft);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.st-strip-cell .v {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.015em;
-  margin-top: 2px;
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-}
-.st-strip-cell .v small {
-  font-size: 11px;
-  color: var(--text-soft);
-  font-weight: 500;
-}
-
-/* -- Detail rows (Hours / Time zone / Phone / Last sync) ---------------- */
-.st-rows {
-  display: flex;
-  flex-direction: column;
-}
-.st-row {
+/* ── Location cell (in the table) ─────────────────────────────────────── */
+.sl-storecell {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 0;
-  border-top: 1px solid var(--border);
-  font-size: 12.5px;
-}
-.st-row:first-child {
-  border-top: 0;
-}
-.st-row .k {
-  color: var(--text-soft);
-  width: 92px;
-  font-size: 11.5px;
-  flex-shrink: 0;
-}
-.st-row .v {
-  flex: 1;
   min-width: 0;
-  font-weight: 500;
+}
+.sl-storecell .ico {
+  width: 28px;
+  height: 38px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.sl-storecell .ico[data-tone="teal"] {
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+.sl-storecell .ico[data-tone="violet"] {
+  background: var(--violet-soft);
+  color: var(--violet);
+}
+.sl-storecell .ico[data-tone="success"] {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.sl-storecell .ico::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0 4px,
+    rgba(0, 0, 0, 0.05) 4px 5px
+  );
+}
+.sl-storecell .body {
+  min-width: 0;
+}
+.sl-storecell .body .ttl {
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.st-row .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--success);
-  flex-shrink: 0;
+.sl-storecell .body .ttl .flag {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--surface-3);
+  color: var(--text-soft);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.sl-storecell .body .meta {
+  font-size: 11px;
+  color: var(--text-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* -- Manager card ------------------------------------------------------- */
-.st-mgr {
+/* ── Manager cell (in the table) ──────────────────────────────────────── */
+.sl-mgrcell {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
+  min-width: 0;
+}
+.sl-mgrcell .nm {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Drawer hero icon ─────────────────────────────────────────────────── */
+.sd-store-ico {
+  width: 88px;
+  height: 88px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.sd-store-ico[data-tone="teal"] {
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+.sd-store-ico[data-tone="violet"] {
+  background: var(--violet-soft);
+  color: var(--violet);
+}
+.sd-store-ico[data-tone="success"] {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.sd-store-ico::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0 7px,
+    rgba(255, 255, 255, 0.16) 7px 8px
+  );
+  pointer-events: none;
+}
+.sd-store-ico svg {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Manager card (dashed pill) ───────────────────────────────────────── */
+.sd-mgrcard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 12px 14px;
   border: 1px dashed var(--border-strong);
   border-radius: 10px;
   background: var(--surface-2);
 }
-.st-mgr .body {
+.sd-mgrcard .body {
   flex: 1;
   min-width: 0;
 }
-.st-mgr .body b {
+.sd-mgrcard .body b {
   display: block;
   font-size: 13px;
   font-weight: 600;
 }
-.st-mgr .body span {
+.sd-mgrcard .body span {
   font-size: 11.5px;
   color: var(--text-soft);
 }
+.sd-mgrcard .body .meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-soft);
+  margin-top: 2px;
+}
 
-/* -- Staff section card ------------------------------------------------- */
-.staff-section {
+/* ── Staff chips ──────────────────────────────────────────────────────── */
+.sd-staffchips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.sd-staffchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px 3px 4px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+.sd-staffchip small {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-soft);
+}
+
+/* ── Customers mini-table inside the drawer ───────────────────────────── */
+.sd-custwrap {
+  border: 1px solid var(--border);
+  border-radius: 10px;
   overflow: hidden;
 }
-.staff-section-head {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  gap: 8px;
-}
-.staff-section-head .grow {
-  flex: 1;
-}
-
-/* -- Staff tabs (segmented pill, white active thumb + shadow) ----------- */
-.staff-tabs {
-  display: flex;
-  gap: 2px;
-  padding: 2px;
-  border-radius: 8px;
-  background: var(--surface-2);
-}
-.staff-tab {
-  border: 0;
-  padding: 5px 11px;
-  border-radius: 6px;
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  background: transparent;
-  color: var(--text-muted);
-  text-transform: capitalize;
-  font-family: inherit;
-  transition: background 0.12s, color 0.12s, box-shadow 0.12s;
-}
-.staff-tab:hover {
-  color: var(--text);
-}
-.staff-tab.is-active {
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: var(--shadow-sm);
-}
-
-/* -- Staff table -------------------------------------------------------- */
-.staff-table-wrap {
-  overflow-x: auto;
-}
-.staff-table {
+.sd-custtable {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 12.5px;
+  border-collapse: collapse;
+  font-size: 12px;
 }
-.staff-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: var(--surface-2);
-  color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 700;
+.sd-custtable thead th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-soft);
+  font-size: 10px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  text-align: left;
-  padding: 8px var(--cell-px);
+  padding: 8px 10px;
   border-bottom: 1px solid var(--border);
-  white-space: nowrap;
+  background: var(--surface-2);
 }
-.staff-table tbody td {
-  padding: 0 var(--cell-px);
-  height: var(--row-h);
+.sd-custtable tbody td {
+  padding: 9px 10px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
-.staff-table tbody tr:last-child td {
+.sd-custtable tbody tr:last-child td {
   border-bottom: 0;
 }
-.staff-table tbody tr:hover td {
+.sd-custtable tbody tr:hover td {
   background: var(--surface-2);
 }
-.staff-table .col-check {
-  width: 36px;
-  padding-right: 0;
-}
-.staff-table .col-kebab {
-  width: 32px;
-  text-align: right;
-}
-.staff-table .col-num {
-  width: 92px;
-}
-.staff-table .col-date {
-  width: 110px;
-}
-.staff-table .col-active {
-  width: 110px;
-}
-.staff-table .col-status {
-  width: 96px;
-}
-.staff-table .col-role {
-  width: 100px;
-}
-.staff-table .col-store {
-  width: 150px;
-}
-
-.staff-member {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  min-width: 0;
-}
-.staff-member .body {
-  min-width: 0;
-}
-.staff-member .ttl {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.staff-member .meta {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  color: var(--text-soft);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.staff-table .mono {
-  font-family: var(--font-mono);
-  font-feature-settings: "zero";
-  font-variant-numeric: tabular-nums;
-  font-size: 11.5px;
-}
-.staff-table .soft {
-  color: var(--text-soft);
-}
-
-/* -- Staff filters row -------------------------------------------------- */
-.staff-filters {
+.sd-custtable .nm-cell {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
-.staff-filters .pa-input {
-  width: 220px;
+.sd-custtable .nm-cell .nm {
+  font-weight: 500;
+  color: var(--text);
+}
+.sd-custtable .nm-cell .em {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-soft);
+}
+.sd-custfoot {
+  padding: 7px 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  background: var(--surface-2);
+  font-size: 11.5px;
+  color: var(--text-soft);
+}
+.sd-custfoot .pa-link-row {
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.sd-custfoot .pa-link-row:hover {
+  text-decoration: underline;
 }

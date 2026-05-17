@@ -136,3 +136,41 @@ export type StaffRow = {
   started: string;
   rentalsMtd: number;
 };
+
+/**
+ * Richer per-store row used by the table on /stores. Adds the address-2,
+ * district, postal_code, customer count, and country-code fields that the
+ * table layout (mirroring Films) needs without disturbing the existing
+ * `StoreRow` consumers.
+ */
+export type StoreListRow = StoreRow & {
+  address2: string | null;
+  district: string;
+  postal: string | null;
+  /** ISO-3166-1 alpha-2 code derived in JS from `country`. */
+  countryCode: string;
+  customers: number;
+};
+
+/**
+ * Drawer payload for a single store. `lastSync` and `opened` are
+ * placeholders today (Pagila has no such columns); a synthetic value is
+ * derived from `store.last_update` so the UI doesn't render blanks.
+ */
+export type StoreDetail = StoreListRow & {
+  /** ISO date (YYYY-MM-DD) derived from `store.last_update`. */
+  opened: string;
+  /** Total rentals over the trailing 7-day window for this store. */
+  rentals7d: number;
+};
+
+/** Customer summary row shown inside the store drawer. */
+export type CustomerSummary = {
+  id: number;
+  name: string;
+  email: string | null;
+  active: boolean;
+  rentals: number;
+  /** ISO timestamp of the customer's most recent rental, or null. */
+  lastRented: string | null;
+};
