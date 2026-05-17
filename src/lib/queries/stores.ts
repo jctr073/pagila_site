@@ -297,6 +297,7 @@ type CustomerSummarySql = {
 export async function listCustomersByStore(
   storeId: number,
   limit = 6,
+  offset = 0,
 ): Promise<CustomerSummary[]> {
   const sql = `
     SELECT
@@ -309,9 +310,9 @@ export async function listCustomersByStore(
     FROM customer cu
     WHERE cu.store_id = $1
     ORDER BY last_rented DESC NULLS LAST, cu.customer_id ASC
-    LIMIT $2
+    LIMIT $2 OFFSET $3
   `;
-  const { rows } = await query<CustomerSummarySql>(sql, [storeId, limit]);
+  const { rows } = await query<CustomerSummarySql>(sql, [storeId, limit, offset]);
   return rows.map((r) => ({
     id: r.id,
     name: r.name,
