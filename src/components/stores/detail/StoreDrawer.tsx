@@ -11,8 +11,6 @@
  * src/app/_store-detail.css.
  */
 
-import Link from "next/link";
-
 import { Avatar, Btn, Chip, Icon, Sparkline } from "@/components/ui";
 import DrawerCloseButton from "@/components/films/detail/DrawerCloseButton";
 import type {
@@ -20,6 +18,8 @@ import type {
   StaffRow,
   StoreDetail,
 } from "@/lib/types";
+
+import StoreCustomersSection from "./StoreCustomersSection";
 
 export type StoreDrawerProps = {
   store: StoreDetail;
@@ -45,18 +45,6 @@ function toneForStore(id: number): Tone {
 }
 function toneForIndex(i: number): Tone {
   return TONE_CYCLE[i % TONE_CYCLE.length]!;
-}
-
-function relTime(iso: string | null): string {
-  if (!iso) return "never";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
-  const days = Math.floor((Date.now() - d.getTime()) / 86_400_000);
-  if (days <= 0) return "today";
-  if (days === 1) return "yesterday";
-  if (days < 30) return `${days}d ago`;
-  if (days < 365) return `${Math.floor(days / 30)}mo ago`;
-  return `${Math.floor(days / 365)}y ago`;
 }
 
 export default function StoreDrawer({
@@ -247,78 +235,11 @@ export default function StoreDrawer({
           </section>
         )}
 
-        <section className="drw-sec">
-          <h4>
-            Customers <span className="pill">{s.customers.toLocaleString()} total</span>
-          </h4>
-          <div className="sd-custwrap">
-            <table className="sd-custtable">
-              <thead>
-                <tr>
-                  <th>Customer</th>
-                  <th style={{ width: 70 }}>Rentals</th>
-                  <th style={{ width: 90 }}>Last</th>
-                  <th style={{ width: 70 }}>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {customers.map((c, i) => (
-                  <tr key={c.id}>
-                    <td>
-                      <div className="nm-cell">
-                        <Avatar
-                          initials={managerInitials(c.name)}
-                          tone={toneForIndex(i)}
-                          size={24}
-                          name={c.name}
-                        />
-                        <div style={{ minWidth: 0 }}>
-                          <div className="nm">{c.name}</div>
-                          {c.email && <div className="em">{c.email}</div>}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="mono" style={{ fontSize: 11.5 }}>
-                        {c.rentals}
-                      </span>
-                    </td>
-                    <td>
-                      <span style={{ color: "var(--text-soft)", fontSize: 11 }}>
-                        {relTime(c.lastRented)}
-                      </span>
-                    </td>
-                    <td>
-                      {c.active ? (
-                        <Chip tone="success" dot>
-                          Active
-                        </Chip>
-                      ) : (
-                        <Chip>Off</Chip>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-                {customers.length === 0 && (
-                  <tr>
-                    <td colSpan={4} style={{ padding: 16, textAlign: "center" }}>
-                      <span style={{ color: "var(--text-soft)" }}>
-                        No customers on file for this store.
-                      </span>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-            <div className="sd-custfoot">
-              Showing {customers.length} of {s.customers.toLocaleString()}
-              <div style={{ flex: 1 }} />
-              <Link href={`/stores/${s.id}`} className="pa-link-row">
-                View all customers <Icon name="arrowRight" size={11} />
-              </Link>
-            </div>
-          </div>
-        </section>
+        <StoreCustomersSection
+          storeId={s.id}
+          total={s.customers}
+          initial={customers}
+        />
 
         <section className="drw-sec">
           <h4>Rental activity</h4>

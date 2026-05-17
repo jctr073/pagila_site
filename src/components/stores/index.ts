@@ -22,6 +22,9 @@ export type { StoresFooterProps } from "./StoresFooter";
 export { default as StoreDrawer } from "./detail/StoreDrawer";
 export type { StoreDrawerProps } from "./detail/StoreDrawer";
 
+export { default as StoreCustomersSection } from "./detail/StoreCustomersSection";
+export type { StoreCustomersSectionProps } from "./detail/StoreCustomersSection";
+
 export { default as StoreDrawerShell } from "./detail/StoreDrawerShell";
 export type { StoreDrawerShellProps } from "./detail/StoreDrawerShell";
 
