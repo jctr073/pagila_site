@@ -283,6 +283,8 @@ npm run db:test:down
 
 Coverage reports are written to `coverage/unit` and `coverage/integration`.
 Run `npm run test:coverage` after starting the test database to generate both.
+CI uploads both reports to Codecov, which posts a combined coverage comment on
+pull requests.
 
 `TEST_DATABASE_URL` can override the integration test host or credentials, but
 it must still connect to the `pagila_test` database; the setup refuses to run
