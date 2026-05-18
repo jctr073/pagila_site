@@ -71,7 +71,7 @@ src/
         [id]/page.tsx          Standalone store detail route
         @drawer/default.tsx    Empty drawer slot for /stores
         @drawer/(.)[id]/       Intercepted store drawer route
-      categories/page.tsx      Placeholder route at /categories
+      categories/page.tsx      Categories list route at /categories
     api/health/route.ts        Database health JSON endpoint
     sandbox/page.tsx           Local sandbox route
   components/
@@ -108,8 +108,10 @@ The app uses the Next.js App Router under `src/app`.
 - `FilmsLayout` in `src/app/(admin)/films/layout.tsx` composes the normal
   `children` slot with the named `@drawer` parallel route slot.
 - `StoresRoute` in `src/app/(admin)/stores/page.tsx` is the `/stores` route.
-- `CategoriesPage` in `src/app/(admin)/categories/page.tsx` is a placeholder
-  linked from the sidebar.
+- `CategoriesRoute` in `src/app/(admin)/categories/page.tsx` validates
+  `sort` and `dir` from `searchParams`, fetches `listCategoriesForTable`,
+  and renders `CategoriesPage`, which owns the new-category and delete
+  confirmation modals.
 - `GET` in `src/app/api/health/route.ts` returns a database health payload.
 
 Next.js 16 route props such as `params` and `searchParams` are promises in this
@@ -163,6 +165,8 @@ app DTOs from `src/lib/types.ts`.
 - `inventory.ts`: `listStoresLite`, `addFilmInventory`.
 - `stores.ts`: `listStores`, `listStoresForTable`, `listStaff`,
   `getStoreDetail`, `listCustomersByStore`, `getStoreRentalSparkline`.
+- `categories.ts`: `listCategoriesForTable`, `createCategory`,
+  `renameCategory`, `deleteCategoryCascade`.
 - `lookups.ts`: `listCategories`, `listLanguages`.
 
 The server action layer in `src/lib/actions` validates action input, calls the
@@ -172,6 +176,8 @@ query layer, and revalidates affected paths.
   `bulkArchive`, `updateFilm`, `updateRateFormAction`,
   `updateCategoryFormAction`.
 - `inventory.ts`: `addFilmInventory`.
+- `categories.ts`: `createCategory`, `renameCategory`, `deleteCategory`
+  (revalidates both `/categories` and `/films`).
 - `preferences.ts`: `setTheme`, `setDensity`.
 
 Database access is centralized in `src/lib/db.ts`:
@@ -190,6 +196,7 @@ Shared DTOs live in `src/lib/types.ts`.
 - Dashboard DTOs: `DashboardKpi`, `RentalsByDay`, `TopFilm`,
   `RecentActivity`.
 - Store/staff DTOs: `StoreRow`, `StaffRow`.
+- Category DTO: `CategoryListRow`.
 
 Frequently touched constants and helpers:
 
