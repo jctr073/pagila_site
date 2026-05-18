@@ -164,6 +164,15 @@ export type StoreDetail = StoreListRow & {
   rentals7d: number;
 };
 
+/** Row in the categories list table. */
+export type CategoryListRow = {
+  id: number;
+  name: string;
+  filmCount: number;
+  /** ISO timestamp (`category.last_update`). */
+  lastUpdate: string;
+};
+
 /** Customer summary row shown inside the store drawer. */
 export type CustomerSummary = {
   id: number;
