@@ -64,6 +64,7 @@ describe("query integration", () => {
     await expect(listStores()).resolves.toEqual([
       {
         id: 1,
+        name: null,
         address: "100 King St",
         city: "Toronto",
         country: "Canada",
@@ -77,6 +78,7 @@ describe("query integration", () => {
       },
       {
         id: 2,
+        name: null,
         address: "200 Pine St",
         city: "Seattle",
         country: "USA",
@@ -394,8 +396,8 @@ describe("query integration", () => {
     });
 
     await expect(getFilmInventoryByStore(1)).resolves.toEqual([
-      { store_id: 1, city: "Toronto", units: 2, out: 1 },
-      { store_id: 2, city: "Seattle", units: 1, out: 0 },
+      { store_id: 1, city: "Toronto", name: null, units: 2, out: 1 },
+      { store_id: 2, city: "Seattle", name: null, units: 1, out: 0 },
     ]);
     await expect(getFilmInventoryByStore(3, true)).resolves.toEqual([]);
 

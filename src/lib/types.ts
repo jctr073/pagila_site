@@ -61,6 +61,8 @@ export type FilmDetail = {
 export type FilmInventoryByStore = {
   store_id: number;
   city: string;
+  /** Optional display label from `store.name` (added in migration 1779069011555). */
+  name: string | null;
   units: number;
   out: number;
 };
@@ -111,6 +113,8 @@ export type RecentActivity = {
 /** Merged store + rollups (§9.1 + §9.2). */
 export type StoreRow = {
   id: number;
+  /** Optional display label from `store.name` (added in migration 1779069011555). */
+  name: string | null;
   address: string;
   city: string;
   country: string;

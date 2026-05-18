@@ -23,7 +23,7 @@ export default async function StoreCustomersPage({
    return (
     <div>
       <h1>
-        Customers for {store.city}, {store.country}
+        Customers for {store.name?.trim() || `${store.city}, ${store.country}`}
       </h1>
 
       <p>
