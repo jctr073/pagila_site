@@ -3,6 +3,7 @@ name: Tests
 on:
   pull_request:
   push:
+    branches: [main]
 
 jobs:
   unit:
@@ -23,6 +24,13 @@ jobs:
           name: coverage-unit
           path: coverage/unit
           if-no-files-found: ignore
+      - if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/unit/lcov.info
+          flags: unit
+          disable_search: true
+          fail_ci_if_error: false
 
   integration:
     name: Integration
@@ -42,5 +50,12 @@ jobs:
           name: coverage-integration
           path: coverage/integration
           if-no-files-found: ignore
+      - if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/integration/lcov.info
+          flags: integration
+          disable_search: true
+          fail_ci_if_error: false
       - if: always()
         run: docker compose logs postgres-test
