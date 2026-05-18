@@ -20,10 +20,14 @@
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f postgres",
     "db:psql": "docker compose exec postgres psql -U postgres -d pagila",
-    "db:test:up": "docker compose up -d postgres-test",
+    "db:migrate": "node --env-file=.env node_modules/node-pg-migrate/bin/node-pg-migrate.js up -m db/migrations",
+    "db:migrate:down": "node --env-file=.env node_modules/node-pg-migrate/bin/node-pg-migrate.js down -m db/migrations",
+    "db:migrate:create": "node-pg-migrate create -j sql -m db/migrations",
+    "db:test:up": "docker compose up -d --wait postgres-test && npm run db:test:migrate",
     "db:test:down": "docker compose stop postgres-test",
     "db:test:logs": "docker compose logs -f postgres-test",
-    "db:test:psql": "docker compose exec postgres-test psql -U postgres -d pagila_test"
+    "db:test:psql": "docker compose exec postgres-test psql -U postgres -d pagila_test",
+    "db:test:migrate": "DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5433/pagila_test node-pg-migrate up -m db/migrations"
   },
   "engines": {
     "node": ">=24.15.0",
@@ -48,6 +52,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "jsdom": "^29.1.1",
+    "node-pg-migrate": "^8.0.4",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.6"

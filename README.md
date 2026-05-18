@@ -258,6 +258,17 @@ npm run db:psql
 npm run db:down
 ```
 
+Schema changes are managed with [node-pg-migrate]; see `db/README.md` for the
+full workflow.
+
+```bash
+npm run db:migrate                            # apply pending migrations to dev DB
+npm run db:migrate:create -- add_column_x     # scaffold a new migration
+npm run db:migrate:down                       # roll back the most recent migration
+```
+
+[node-pg-migrate]: https://salsita.github.io/node-pg-migrate/
+
 ## Testing
 
 Unit tests run with Vitest and do not connect to Postgres:
@@ -269,10 +280,11 @@ npm run test:unit:watch
 ```
 
 Integration tests run against a separate Postgres container on port `5433`.
-The test database is named `pagila_test` and is initialized from the
-schema-only dump in `db/schema.sql`, so development data from
-`localhost:5432/pagila` is not copied or queried by tests. The default test
-connection string is `postgresql://postgres:postgres@127.0.0.1:5433/pagila_test`.
+The test database is named `pagila_test` and its schema is built by running
+the migrations in `db/migrations/` against an empty container, so development
+data from `localhost:5432/pagila` is not copied or queried by tests. The
+default test connection string is
+`postgresql://postgres:postgres@127.0.0.1:5433/pagila_test`.
 
 ```bash
 npm run db:test:up
