@@ -1,8 +1,17 @@
+-- Up Migration
+--
+-- Baseline migration: full schema snapshot of the Pagila database as of the
+-- date this file was created. Generated with:
+--   docker run --rm postgres:18-alpine pg_dump --schema-only --no-owner --no-privileges \
+--     postgresql://postgres:postgres@host.docker.internal:5432/pagila
+-- psql meta-commands (\restrict / \unrestrict) were stripped so the file runs
+-- through the pg client driver.
+--
+
 --
 -- PostgreSQL database dump
 --
 
-\restrict X1aoi1jqx6FSY8CKeWXIiRQ6vfBb8UuDER2iFSffHXAiof1W8ZzhVrt5vreFhDf
 
 -- Dumped from database version 17.9 (Debian 17.9-1.pgdg13+1)
 -- Dumped by pg_dump version 18.4
@@ -1833,5 +1842,10 @@ ALTER TABLE ONLY public.store
 -- PostgreSQL database dump complete
 --
 
-\unrestrict X1aoi1jqx6FSY8CKeWXIiRQ6vfBb8UuDER2iFSffHXAiof1W8ZzhVrt5vreFhDf
 
+
+-- Down Migration
+--
+-- Intentionally empty: rolling back the baseline would drop every Pagila table
+-- and is not supported. Add reverse statements only if you truly want to wipe
+-- the schema.
