@@ -141,7 +141,7 @@ export default function FilmAddInventoryForm({
           <div className="mdl-section-h">Stores</div>
           <div className="add-inv-list">
             {stores.map((s) => {
-              const meta = storeLabel({ id: s.id, city: s.city });
+              const meta = storeLabel({ id: s.id, city: s.city, name: s.name });
               const row = rows[s.id] ?? { checked: false, units: 1 };
               const current = currentByStore.get(s.id) ?? 0;
               return (

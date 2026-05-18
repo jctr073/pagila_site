@@ -202,7 +202,7 @@ export default function FilmDrawer({
               <div>Out</div>
             </div>
             {inventory.map((row) => {
-              const meta = storeLabel({ id: row.store_id, city: row.city });
+              const meta = storeLabel({ id: row.store_id, city: row.city, name: row.name });
               return (
                 <div key={row.store_id} className="drw-inv-row">
                   <div>

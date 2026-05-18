@@ -3,17 +3,19 @@ import { getPool, query } from "@/lib/db";
 export type StoreLite = {
   id: number;
   city: string;
+  name: string | null;
 };
 
 /**
- * Lightweight stores-for-picker query. Returns `{ id, city }` for every
+ * Lightweight stores-for-picker query. Returns `{ id, city, name }` for every
  * store. Used by the "Add stock" modal — heavy `listStores()` rollups
  * aren't needed there.
  */
 export async function listStoresLite(): Promise<StoreLite[]> {
   const sql = `
     SELECT s.store_id AS id,
-           c.city     AS city
+           c.city     AS city,
+           s.name     AS name
       FROM store s
       JOIN address a ON a.address_id = s.address_id
       JOIN city c    ON c.city_id    = a.city_id

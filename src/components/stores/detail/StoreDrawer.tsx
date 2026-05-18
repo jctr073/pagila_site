@@ -108,11 +108,10 @@ export default function StoreDrawer({
           </div>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <h2>
-            {s.city}, {s.country}
-          </h2>
+          <h2>{s.name?.trim() || `${s.city}, ${s.country}`}</h2>
           <div className="sub">
-            <b>Store #{s.id}</b> · {s.countryCode} · opened <b>{openedYear}</b>
+            <b>Store #{s.id}</b> · {s.city}, {s.country} · {s.countryCode} ·
+            opened <b>{openedYear}</b>
           </div>
           <div className="drw-tags">
             <Chip tone={tone === "teal" ? "teal" : "accent"}>{s.district}</Chip>

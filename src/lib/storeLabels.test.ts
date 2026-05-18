@@ -28,4 +28,19 @@ describe("storeLabel", () => {
       "Lethbridge #1",
     );
   });
+
+  it("prefers the store's own name when present", () => {
+    expect(
+      storeLabel({ id: 1, city: "Lethbridge", name: "E. Anderson" }).name,
+    ).toBe("E. Anderson");
+  });
+
+  it("falls back to the city-derived label when name is blank or null", () => {
+    expect(storeLabel({ id: 2, city: "Woodridge", name: null }).name).toBe(
+      "Woodridge #2",
+    );
+    expect(storeLabel({ id: 2, city: "Woodridge", name: "   " }).name).toBe(
+      "Woodridge #2",
+    );
+  });
 });

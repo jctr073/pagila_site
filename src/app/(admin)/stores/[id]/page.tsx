@@ -36,7 +36,9 @@ export default async function StandaloneStorePage({
   if (!store) notFound();
 
   return (
-    <StandaloneStoreDrawerPage title={`${store.city}, ${store.country}`}>
+    <StandaloneStoreDrawerPage
+      title={store.name?.trim() || `${store.city}, ${store.country}`}
+    >
       <StoreDrawer
         store={store}
         staff={staff}

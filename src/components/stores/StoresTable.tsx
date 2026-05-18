@@ -166,7 +166,7 @@ export default function StoresTable({
                   <Link
                     href={`/stores/${s.id}`}
                     className="fl-rowlink"
-                    aria-label={`Open ${s.city}, ${s.country}`}
+                    aria-label={`Open ${s.name ?? s.city}, ${s.country}`}
                   >
                     <div className="sl-storecell">
                       <div className="ico" data-tone={tone} aria-hidden="true">
@@ -176,11 +176,11 @@ export default function StoresTable({
                       </div>
                       <div className="body">
                         <div className="ttl">
-                          {s.city}
+                          {s.name?.trim() || s.city}
                           <span className="flag">{s.countryCode}</span>
                         </div>
                         <div className="meta">
-                          {s.country} · {s.district}
+                          {s.city}, {s.country} · {s.district}
                         </div>
                       </div>
                     </div>

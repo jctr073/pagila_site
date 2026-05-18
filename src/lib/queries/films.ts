@@ -221,6 +221,7 @@ export async function getFilmInventoryByStore(
   const sql = `
     SELECT s.store_id,
            c.city AS city,
+           s.name AS name,
            count(i.inventory_id)::int AS units,
            count(r.rental_id) FILTER (WHERE r.return_date IS NULL)::int AS out
     FROM store s
@@ -228,7 +229,7 @@ export async function getFilmInventoryByStore(
     JOIN city c    ON c.city_id    = a.city_id
     LEFT JOIN inventory i ON i.store_id = s.store_id AND i.film_id = $1
     LEFT JOIN rental r    ON r.inventory_id = i.inventory_id
-    GROUP BY s.store_id, c.city
+    GROUP BY s.store_id, c.city, s.name
     ${excludeEmpty ? "HAVING count(i.inventory_id) >= 1" : ""}
     ORDER BY s.store_id
   `;

@@ -10,6 +10,7 @@ import { countryCodeFor } from "@/lib/countryCodes";
 
 type StoreRowSql = {
   id: number;
+  name: string | null;
   address: string;
   city: string;
   country: string;
@@ -32,6 +33,7 @@ export async function listStores(): Promise<StoreRow[]> {
     WITH base AS (
       SELECT
         st.store_id              AS id,
+        st.name                  AS name,
         a.address                AS address,
         c.city                   AS city,
         co.country               AS country,
@@ -46,7 +48,7 @@ export async function listStores(): Promise<StoreRow[]> {
       JOIN staff mgr   ON mgr.staff_id = st.manager_staff_id
     )
     SELECT
-      b.id, b.address, b.city, b.country, b.phone,
+      b.id, b.name, b.address, b.city, b.country, b.phone,
       b.manager, b.manager_email, b.manager_id,
       (SELECT count(*) FROM inventory i WHERE i.store_id = b.id)::int AS inventory,
       (SELECT count(*) FROM rental r
@@ -61,6 +63,7 @@ export async function listStores(): Promise<StoreRow[]> {
   const { rows } = await query<StoreRowSql>(sql);
   return rows.map((r) => ({
     id: r.id,
+    name: r.name ?? null,
     address: r.address,
     city: r.city,
     country: r.country,
@@ -160,6 +163,7 @@ export async function listStoresForTable(
     WITH base AS (
       SELECT
         st.store_id              AS id,
+        st.name                  AS name,
         a.address                AS address,
         a.address2               AS address2,
         a.district               AS district,
@@ -177,7 +181,7 @@ export async function listStoresForTable(
       JOIN staff mgr   ON mgr.staff_id = st.manager_staff_id
     )
     SELECT
-      b.id, b.address, b.address2, b.district, b.postal, b.phone,
+      b.id, b.name, b.address, b.address2, b.district, b.postal, b.phone,
       b.city, b.country,
       b.manager, b.manager_email, b.manager_id,
       (SELECT count(*) FROM inventory i WHERE i.store_id = b.id)::int AS inventory,
@@ -198,6 +202,7 @@ export async function listStoresForTable(
 function toListRow(r: StoreListRowSql): StoreListRow {
   return {
     id: r.id,
+    name: r.name ?? null,
     address: r.address,
     address2: r.address2 ?? null,
     district: r.district,
@@ -233,6 +238,7 @@ export async function getStoreDetail(
     WITH base AS (
       SELECT
         st.store_id              AS id,
+        st.name                  AS name,
         st.last_update           AS opened,
         a.address                AS address,
         a.address2               AS address2,
@@ -252,7 +258,7 @@ export async function getStoreDetail(
       WHERE st.store_id = $1
     )
     SELECT
-      b.id, b.opened,
+      b.id, b.name, b.opened,
       b.address, b.address2, b.district, b.postal, b.phone,
       b.city, b.country,
       b.manager, b.manager_email, b.manager_id,
