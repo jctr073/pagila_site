@@ -73,6 +73,14 @@ src/
         @drawer/default.tsx    Empty drawer slot for /stores
         @drawer/(.)[id]/       Intercepted store drawer route
         @drawer/(.)[id]/edit/  Intercepted store edit modal route
+      rentals/
+        layout.tsx             Rentals list plus @drawer parallel slot
+        page.tsx               Rentals list route at /rentals
+        [id]/page.tsx          Standalone rental detail route
+        new/page.tsx           Standalone new-rental route
+        @drawer/default.tsx    Empty drawer slot for /rentals
+        @drawer/(.)[id]/       Intercepted rental drawer route
+        @drawer/(.)new/        Intercepted new-rental modal route
       categories/page.tsx      Categories list route at /categories
     api/health/route.ts        Database health JSON endpoint
     sandbox/page.tsx           Local sandbox route
@@ -84,6 +92,9 @@ src/
     stores/                    Stores table, toolbar, footer, bulk bar
     stores/detail/             Drawer, drawer shell, standalone wrapper,
                                edit modal shell, edit form
+    rentals/                   Rentals table, toolbar, footer, bulk bar
+    rentals/detail/            Drawer, drawer shell, standalone wrapper,
+                               new-rental form, new-rental modal shell
     ui/                        Shared primitives and tiny visualizations
   lib/
     db.ts                      Postgres pool and typed query helper
@@ -175,6 +186,12 @@ app DTOs from `src/lib/types.ts`.
   `getStoreDetail`, `listCustomersByStore`, `getStoreRentalSparkline`,
   `updateStore` (atomic `store` + joined `address` patch in one
   transaction).
+- `rentals.ts`: `listRentalsForTable` (paginated, status-aware),
+  `getRentalDetail`, `listCustomersLookup`,
+  `listAvailableInventory`, `createRental`, `returnRental`,
+  `reopenRental`, `deleteRental`. Status (`open` / `overdue` /
+  `returned`) is derived from `return_date` and `film.rental_duration`
+  in SQL on every read.
 - `categories.ts`: `listCategoriesForTable`, `createCategory`,
   `renameCategory`, `deleteCategoryCascade`.
 - `lookups.ts`: `listCategories`, `listLanguages`, `listCities`.
@@ -188,6 +205,9 @@ query layer, and revalidates affected paths.
 - `inventory.ts`: `addFilmInventory`.
 - `stores.ts`: `updateStore` (revalidates `/stores`, `/stores/[id]`, and
   `/stores/[id]/edit`).
+- `rentals.ts`: `createRentalAction`, `returnRentalAction`,
+  `reopenRentalAction`, `deleteRentalAction` (each revalidates
+  `/rentals`, `/rentals/[id]`, and the dashboard).
 - `categories.ts`: `createCategory`, `renameCategory`, `deleteCategory`
   (revalidates both `/categories` and `/films`).
 - `preferences.ts`: `setTheme`, `setDensity`.
@@ -257,6 +277,7 @@ Stores components are re-exported from `src/components/stores/index.ts`:
 - `_stores.css`: stores and staff UI.
 - `_films.css`: films list UI.
 - `_film-detail.css`: drawer and edit modal UI.
+- `_rentals.css`: rentals list and rental-detail drawer UI.
 
 Theme and density are cookie-backed. `getPreferences()` reads them on the
 server, `RootLayout` applies classes, and `UserMenu` changes them through

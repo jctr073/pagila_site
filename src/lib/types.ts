@@ -203,3 +203,66 @@ export type CustomerSummary = {
   /** ISO timestamp of the customer's most recent rental, or null. */
   lastRented: string | null;
 };
+
+/**
+ * Display-time rental status derived from `return_date` and
+ * `film.rental_duration`. Never persisted — recomputed in SQL on each
+ * read so it stays accurate without a write-side trigger.
+ */
+export type RentalStatus = "open" | "returned" | "overdue";
+
+/** One row in the rentals list table. */
+export type RentalRow = {
+  id: number;
+  /** ISO timestamp. */
+  rentedAt: string;
+  /** ISO timestamp; null while the film is still out. */
+  returnedAt: string | null;
+  /** ISO date (yyyy-mm-dd) — rentedAt + film.rental_duration days. */
+  dueOn: string;
+  status: RentalStatus;
+  filmId: number;
+  filmTitle: string;
+  filmRate: number;
+  filmDurationDays: number;
+  inventoryId: number;
+  customerId: number;
+  customerName: string;
+  customerEmail: string | null;
+  storeId: number;
+  storeCity: string;
+  storeName: string | null;
+  staffId: number;
+  staffName: string;
+};
+
+/** Full rental detail used by the drawer. */
+export type RentalDetail = RentalRow & {
+  filmRating: Rating;
+  filmLength: number;
+  /** Days the rental is overdue when status is "overdue", else 0. */
+  daysOverdue: number;
+  /** Total payments collected against this rental, or 0. */
+  paid: number;
+};
+
+/** Customer pick-list entry for the new-rental form. */
+export type CustomerLookupRow = {
+  id: number;
+  name: string;
+  email: string | null;
+  storeId: number;
+  active: boolean;
+};
+
+/** Available inventory entry for the new-rental form. */
+export type InventoryAvailability = {
+  inventoryId: number;
+  filmId: number;
+  filmTitle: string;
+  filmRate: number;
+  filmDurationDays: number;
+  storeId: number;
+  storeCity: string;
+  storeName: string | null;
+};

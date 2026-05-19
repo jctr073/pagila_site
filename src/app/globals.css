@@ -5,6 +5,7 @@
 @import "./_stores.css";
 @import "./_films.css";
 @import "./_film-detail.css";
+@import "./_rentals.css";
 
 :root {
   --bg: oklch(0.985 0.005 70);
