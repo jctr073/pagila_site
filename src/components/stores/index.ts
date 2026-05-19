@@ -30,3 +30,9 @@ export type { StoreDrawerShellProps } from "./detail/StoreDrawerShell";
 
 export { default as StandaloneStoreDrawerPage } from "./detail/StandaloneStoreDrawerPage";
 export type { StandaloneStoreDrawerPageProps } from "./detail/StandaloneStoreDrawerPage";
+
+export { default as StoreEditForm } from "./detail/StoreEditForm";
+export type { StoreEditFormProps } from "./detail/StoreEditForm";
+
+export { default as StoreEditModalShell } from "./detail/StoreEditModalShell";
+export type { StoreEditModalShellProps } from "./detail/StoreEditModalShell";

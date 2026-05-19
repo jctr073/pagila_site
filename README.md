@@ -69,8 +69,10 @@ src/
         layout.tsx             Stores list plus @drawer parallel slot
         page.tsx               Stores list route at /stores
         [id]/page.tsx          Standalone store detail route
+        [id]/edit/page.tsx     Standalone store edit route
         @drawer/default.tsx    Empty drawer slot for /stores
         @drawer/(.)[id]/       Intercepted store drawer route
+        @drawer/(.)[id]/edit/  Intercepted store edit modal route
       categories/page.tsx      Categories list route at /categories
     api/health/route.ts        Database health JSON endpoint
     sandbox/page.tsx           Local sandbox route
@@ -80,7 +82,8 @@ src/
     films/                     Films table, toolbar, footer, inline edits
     films/detail/              Drawer, edit modal, edit form, shells
     stores/                    Stores table, toolbar, footer, bulk bar
-    stores/detail/             Drawer, drawer shell, standalone wrapper
+    stores/detail/             Drawer, drawer shell, standalone wrapper,
+                               edit modal shell, edit form
     ui/                        Shared primitives and tiny visualizations
   lib/
     db.ts                      Postgres pool and typed query helper
@@ -145,6 +148,11 @@ Films are the most route-rich section.
   `@drawer/(.)[id]/add-inventory/page.tsx` and renders `FilmEditModalShell`
   plus `FilmAddInventoryForm`. The form inserts one `inventory` row per
   unit per selected store in a single transaction.
+- `/stores/[id]/edit` hard loads render `StandaloneStoreDrawerPage`
+  wrapping `StoreEditForm` (standalone mode). Client navigation uses
+  `@drawer/(.)[id]/edit/page.tsx` and renders `StoreEditModalShell` plus
+  `StoreEditForm`. Both routes share the same `getStoreDetail` plus
+  `listCities` data fetch.
 
 ## Code Organization
 
@@ -164,10 +172,12 @@ app DTOs from `src/lib/types.ts`.
   `bulkArchiveFilms`.
 - `inventory.ts`: `listStoresLite`, `addFilmInventory`.
 - `stores.ts`: `listStores`, `listStoresForTable`, `listStaff`,
-  `getStoreDetail`, `listCustomersByStore`, `getStoreRentalSparkline`.
+  `getStoreDetail`, `listCustomersByStore`, `getStoreRentalSparkline`,
+  `updateStore` (atomic `store` + joined `address` patch in one
+  transaction).
 - `categories.ts`: `listCategoriesForTable`, `createCategory`,
   `renameCategory`, `deleteCategoryCascade`.
-- `lookups.ts`: `listCategories`, `listLanguages`.
+- `lookups.ts`: `listCategories`, `listLanguages`, `listCities`.
 
 The server action layer in `src/lib/actions` validates action input, calls the
 query layer, and revalidates affected paths.
@@ -176,6 +186,8 @@ query layer, and revalidates affected paths.
   `bulkArchive`, `updateFilm`, `updateRateFormAction`,
   `updateCategoryFormAction`.
 - `inventory.ts`: `addFilmInventory`.
+- `stores.ts`: `updateStore` (revalidates `/stores`, `/stores/[id]`, and
+  `/stores/[id]/edit`).
 - `categories.ts`: `createCategory`, `renameCategory`, `deleteCategory`
   (revalidates both `/categories` and `/films`).
 - `preferences.ts`: `setTheme`, `setDensity`.
@@ -195,7 +207,8 @@ Shared DTOs live in `src/lib/types.ts`.
   `FilmCastMember`, `Rating`, `SpecialFeature`.
 - Dashboard DTOs: `DashboardKpi`, `RentalsByDay`, `TopFilm`,
   `RecentActivity`.
-- Store/staff DTOs: `StoreRow`, `StaffRow`.
+- Store/staff DTOs: `StoreRow`, `StoreDetail`, `StoreEditPatch`,
+  `StaffRow`.
 - Category DTO: `CategoryListRow`.
 
 Frequently touched constants and helpers:
@@ -231,8 +244,8 @@ Dashboard components are re-exported from `src/components/dashboard/index.ts`:
 
 Stores components are re-exported from `src/components/stores/index.ts`:
 `StoresHeader`, `StoresPage`, `StoresToolbar`, `StoresBulkBar`,
-`StoresTable`, `StoresFooter`, `StoreDrawer`, `StoreDrawerShell`, and
-`StandaloneStoreDrawerPage`.
+`StoresTable`, `StoresFooter`, `StoreDrawer`, `StoreDrawerShell`,
+`StandaloneStoreDrawerPage`, `StoreEditForm`, and `StoreEditModalShell`.
 
 ## Styling
 

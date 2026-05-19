@@ -1,8 +1,9 @@
-import { query } from "@/lib/db";
+import { getPool, query } from "@/lib/db";
 import type {
   CustomerSummary,
   StaffRow,
   StoreDetail,
+  StoreEditPatch,
   StoreListRow,
   StoreRow,
 } from "@/lib/types";
@@ -327,6 +328,82 @@ export async function listCustomersByStore(
     rentals: r.rentals,
     lastRented: r.last_rented ? r.last_rented.toISOString() : null,
   }));
+}
+
+/**
+ * Atomic store-edit write. Updates `store.name` and the joined `address`
+ * row in one transaction so a partial failure can't leave the two tables
+ * out of sync. COALESCE on each column lets the caller pass a sparse
+ * patch; explicit "touch" flags handle nullable columns (name, address2,
+ * postal_code) since COALESCE-NULL means "leave it".
+ */
+export async function updateStore(
+  id: number,
+  patch: StoreEditPatch,
+): Promise<void> {
+  if (!Number.isFinite(id) || id <= 0) throw new Error("invalid id");
+
+  const touchName = Object.prototype.hasOwnProperty.call(patch, "name");
+  const touchAddress2 = Object.prototype.hasOwnProperty.call(patch, "address2");
+  const touchPostal = Object.prototype.hasOwnProperty.call(patch, "postal");
+
+  const client = await getPool().connect();
+  try {
+    await client.query("BEGIN");
+
+    if (touchName) {
+      await client.query(
+        `UPDATE store
+            SET name = $2,
+                last_update = now()
+          WHERE store_id = $1`,
+        [id, patch.name ?? null],
+      );
+    }
+
+    // Only touch the address row if at least one address column moved.
+    const touchesAddress =
+      patch.address !== undefined ||
+      touchAddress2 ||
+      patch.district !== undefined ||
+      touchPostal ||
+      patch.phone !== undefined ||
+      patch.cityId !== undefined;
+
+    if (touchesAddress) {
+      await client.query(
+        `UPDATE address a
+            SET address     = COALESCE($2, a.address),
+                address2    = CASE WHEN $8::boolean THEN $3 ELSE a.address2 END,
+                district    = COALESCE($4, a.district),
+                postal_code = CASE WHEN $9::boolean THEN $5 ELSE a.postal_code END,
+                phone       = COALESCE($6, a.phone),
+                city_id     = COALESCE($7, a.city_id),
+                last_update = now()
+           FROM store s
+          WHERE s.store_id = $1
+            AND a.address_id = s.address_id`,
+        [
+          id,
+          patch.address ?? null,
+          patch.address2 ?? null,
+          patch.district ?? null,
+          patch.postal ?? null,
+          patch.phone ?? null,
+          patch.cityId ?? null,
+          touchAddress2,
+          touchPostal,
+        ],
+      );
+    }
+
+    await client.query("COMMIT");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 /**
