@@ -168,6 +168,22 @@ export type StoreDetail = StoreListRow & {
   rentals7d: number;
 };
 
+/**
+ * Patch shape accepted by the store-edit modal and `updateStore`. All
+ * keys are optional — sparse patches drive the auto-save flow. `cityId`
+ * is the FK on the address row; `country` is determined by the city, so
+ * it is not part of the patch.
+ */
+export type StoreEditPatch = {
+  name?: string | null;
+  address?: string;
+  address2?: string | null;
+  district?: string;
+  postal?: string | null;
+  phone?: string;
+  cityId?: number;
+};
+
 /** Row in the categories list table. */
 export type CategoryListRow = {
   id: number;

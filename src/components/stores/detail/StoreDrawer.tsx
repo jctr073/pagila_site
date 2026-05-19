@@ -11,6 +11,8 @@
  * src/app/_store-detail.css.
  */
 
+import Link from "next/link";
+
 import { Avatar, Btn, Chip, Icon, Sparkline } from "@/components/ui";
 import DrawerCloseButton from "@/components/films/detail/DrawerCloseButton";
 import type {
@@ -268,9 +270,11 @@ export default function StoreDrawer({
         </Btn>
         <div className="grow" />
         <DrawerCloseButton fallbackHref="/stores">Close</DrawerCloseButton>
-        <Btn size="sm" variant="primary" leftIcon="pencil" disabled>
-          Edit store
-        </Btn>
+        <Link href={`/stores/${s.id}/edit`} aria-label="Edit store">
+          <Btn size="sm" variant="primary" leftIcon="pencil">
+            Edit store
+          </Btn>
+        </Link>
       </footer>
     </article>
   );
