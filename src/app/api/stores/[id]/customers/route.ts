@@ -13,7 +13,7 @@ export async function GET(
 ) {
   const { id } = await ctx.params;
   const storeId = Number.parseInt(id, 10);
-  if (!Number.isFinite(storeId) || storeId <= 0) {
+  if (!Number.isFinite(storeId) || storeId < 0) {
     return NextResponse.json({ error: "invalid store id" }, { status: 400 });
   }
 

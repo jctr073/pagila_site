@@ -25,7 +25,7 @@ export default async function StandaloneStorePage({
 }) {
   const { id } = await params;
   const storeId = Number.parseInt(id, 10);
-  if (!Number.isFinite(storeId) || storeId <= 0) notFound();
+  if (!Number.isFinite(storeId) || storeId < 0) notFound();
 
   const [store, staff, customers, sparkline] = await Promise.all([
     getStoreDetail(storeId),
