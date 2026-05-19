@@ -33,7 +33,7 @@ export async function updateStore(
   patch: StoreEditPatch,
 ): Promise<UpdateStoreResult> {
   try {
-    if (!Number.isFinite(id) || id <= 0) {
+    if (!Number.isFinite(id) || id < 0) {
       return { ok: false, error: "invalid id" };
     }
     if (!patch || typeof patch !== "object") {

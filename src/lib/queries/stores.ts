@@ -341,7 +341,7 @@ export async function updateStore(
   id: number,
   patch: StoreEditPatch,
 ): Promise<void> {
-  if (!Number.isFinite(id) || id <= 0) throw new Error("invalid id");
+  if (!Number.isFinite(id) || id < 0) throw new Error("invalid id");
 
   const touchName = Object.prototype.hasOwnProperty.call(patch, "name");
   const touchAddress2 = Object.prototype.hasOwnProperty.call(patch, "address2");

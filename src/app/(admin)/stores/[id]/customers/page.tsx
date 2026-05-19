@@ -13,7 +13,7 @@ export default async function StoreCustomersPage({
     const { id } = await params;
     const storeId = Number.parseInt(id, 10);
 
-    if (!Number.isFinite(storeId) || storeId <= 0) notFound();
+    if (!Number.isFinite(storeId) || storeId < 0) notFound();
 
    const store = await getStoreDetail(storeId);
    if (!store) notFound();
