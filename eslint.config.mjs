@@ -18,6 +18,7 @@ const eslintConfig = defineConfig([
     // not bundled, and intentionally violate the "no implicit globals"
     // rule. See design_handoff_pagila_admin/README.md §10.
     "design_handoff_pagila_admin/**",
+    "design_handoff_pagila_admin */**",
   ]),
 ]);
 

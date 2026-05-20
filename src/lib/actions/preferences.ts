@@ -20,7 +20,9 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 import {
+  DENSITIES as DENSITY_LIST,
   DENSITY_COOKIE,
+  THEMES as THEME_LIST,
   THEME_COOKIE,
   type Density,
   type Theme,
@@ -28,12 +30,8 @@ import {
 
 const ONE_YEAR = 60 * 60 * 24 * 365;
 
-const THEMES: ReadonlySet<Theme> = new Set(["light", "dark", "system"]);
-const DENSITIES: ReadonlySet<Density> = new Set([
-  "compact",
-  "regular",
-  "comfy",
-]);
+const THEMES: ReadonlySet<Theme> = new Set(THEME_LIST);
+const DENSITIES: ReadonlySet<Density> = new Set(DENSITY_LIST);
 
 export async function setTheme(theme: Theme): Promise<void> {
   if (!(THEMES as Set<string>).has(theme)) {
