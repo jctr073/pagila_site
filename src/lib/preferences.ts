@@ -11,33 +11,50 @@
  * 04-functions/cookies.md): `cookies()` is async and returns a Promise
  * of a read-only cookie store. We can read but not set here; mutations
  * happen in server actions / route handlers only.
+ *
+ * Type/label exports re-exported from ./themes so client components
+ * can import option lists without dragging `next/headers` into the
+ * browser bundle.
  */
 
 import { cookies } from "next/headers";
 
-export type Theme = "light" | "dark" | "system";
-export type Density = "compact" | "regular" | "comfy";
+import {
+  DEFAULT_DENSITY,
+  DEFAULT_THEME,
+  DENSITIES,
+  DENSITY_COOKIE,
+  THEMES,
+  THEME_COOKIE,
+  type Density,
+  type Theme,
+} from "./themes";
 
-export const THEME_COOKIE = "pa-theme";
-export const DENSITY_COOKIE = "pa-density";
+export {
+  DARK_THEMES,
+  DEFAULT_DENSITY,
+  DEFAULT_THEME,
+  DENSITIES,
+  DENSITY_COOKIE,
+  THEMES,
+  THEME_COOKIE,
+  THEME_LABELS,
+  themeClassFor,
+  type Density,
+  type Theme,
+} from "./themes";
 
-export const DEFAULT_THEME: Theme = "system";
-export const DEFAULT_DENSITY: Density = "compact";
-
-const THEME_VALUES: ReadonlySet<Theme> = new Set(["light", "dark", "system"]);
-const DENSITY_VALUES: ReadonlySet<Density> = new Set([
-  "compact",
-  "regular",
-  "comfy",
-]);
+const THEME_VALUES: ReadonlySet<string> = new Set([...THEMES, "light"]);
+const DENSITY_VALUES: ReadonlySet<string> = new Set(DENSITIES);
 
 function asTheme(v: string | undefined): Theme {
-  return v && (THEME_VALUES as Set<string>).has(v) ? (v as Theme) : DEFAULT_THEME;
+  if (!v || !THEME_VALUES.has(v)) return DEFAULT_THEME;
+  // legacy: pre-handoff-2 cookies stored "light"
+  if (v === "light") return "persimmon";
+  return v as Theme;
 }
 function asDensity(v: string | undefined): Density {
-  return v && (DENSITY_VALUES as Set<string>).has(v)
-    ? (v as Density)
-    : DEFAULT_DENSITY;
+  return v && DENSITY_VALUES.has(v) ? (v as Density) : DEFAULT_DENSITY;
 }
 
 export async function getPreferences(): Promise<{
@@ -49,14 +66,4 @@ export async function getPreferences(): Promise<{
     theme: asTheme(store.get(THEME_COOKIE)?.value),
     density: asDensity(store.get(DENSITY_COOKIE)?.value),
   };
-}
-
-/**
- * Map a Theme to the html-level class. 'system' resolves to '' here
- * because we leave the resolution to a tiny inline script that reads
- * matchMedia('(prefers-color-scheme: dark)') before first paint. That
- * keeps dark-mode-on-system users flash-free.
- */
-export function themeClassFor(theme: Theme): "" | "theme-dark" {
-  return theme === "dark" ? "theme-dark" : "";
 }

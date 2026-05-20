@@ -4,9 +4,9 @@
  * UserMenu — avatar button + popover for the topbar.
  *
  * Phase 3 stubbed the theme + density buttons; Phase 10 wires them to
- * the server actions in @/lib/actions/preferences. Each toggle cycles
- * through its value space, calls the server action inside a
- * `useTransition` so the menu stays responsive, and emits a toast.
+ * the server actions in @/lib/actions/preferences. The theme picker
+ * expands into a sublist (9 options is too many to cycle through);
+ * density still cycles since there are only three values.
  *
  * The actual <html>/<body> classes are applied server-side after the
  * cookie write — see src/app/layout.tsx + src/lib/preferences.ts. We
@@ -20,10 +20,13 @@ import { useEffect, useState, useTransition } from "react";
 import Avatar from "@/components/ui/Avatar";
 import { toast } from "@/components/ui/Toast";
 import { setDensity, setTheme } from "@/lib/actions/preferences";
-import type { Density, Theme } from "@/lib/preferences";
-
-const THEMES: readonly Theme[] = ["light", "dark", "system"];
-const DENSITIES: readonly Density[] = ["compact", "regular", "comfy"];
+import {
+  DENSITIES,
+  THEMES,
+  THEME_LABELS,
+  type Density,
+  type Theme,
+} from "@/lib/themes";
 
 function nextOf<T>(arr: readonly T[], current: T): T {
   const i = arr.indexOf(current);
@@ -42,6 +45,9 @@ function cap(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+const THEME_SET: ReadonlySet<string> = new Set(THEMES);
+const DENSITY_SET: ReadonlySet<string> = new Set(DENSITIES);
+
 export type UserMenuProps = {
   initialTheme?: Theme;
   initialDensity?: Density;
@@ -52,6 +58,7 @@ export default function UserMenu({
   initialDensity = "compact",
 }: UserMenuProps) {
   const [open, setOpen] = useState(false);
+  const [themesOpen, setThemesOpen] = useState(false);
   const [theme, setThemeState] = useState<Theme>(initialTheme);
   const [density, setDensityState] = useState<Density>(initialDensity);
   const [pending, startTransition] = useTransition();
@@ -62,20 +69,20 @@ export default function UserMenu({
   // here we're explicitly bridging a client-only source (document.cookie)
   // into React state — exactly what effects are for.
   useEffect(() => {
-    const t = readCookie("pa-theme") as Theme | undefined;
-    const d = readCookie("pa-density") as Density | undefined;
+    const t = readCookie("pa-theme");
+    const d = readCookie("pa-density");
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (t && THEMES.includes(t)) setThemeState(t);
-    if (d && DENSITIES.includes(d)) setDensityState(d);
+    if (t && THEME_SET.has(t)) setThemeState(t as Theme);
+    if (d && DENSITY_SET.has(d)) setDensityState(d as Density);
   }, []);
 
-  function cycleTheme() {
-    const next = nextOf(THEMES, theme);
+  function pickTheme(next: Theme) {
     setThemeState(next);
+    setThemesOpen(false);
     startTransition(async () => {
       try {
         await setTheme(next);
-        toast.success(`Theme: ${cap(next)}`);
+        toast.success(`Theme: ${THEME_LABELS[next]}`);
       } catch (e) {
         toast.error((e as Error).message);
       }
@@ -95,9 +102,14 @@ export default function UserMenu({
     });
   }
 
+  function close() {
+    setOpen(false);
+    setThemesOpen(false);
+  }
+
   function signOut() {
     // Real auth lands later — for now, just close the menu.
-    setOpen(false);
+    close();
   }
 
   return (
@@ -119,7 +131,7 @@ export default function UserMenu({
             type="button"
             aria-label="Close account menu"
             className="pa-popover-backdrop"
-            onClick={() => setOpen(false)}
+            onClick={close}
           />
           <div className="pa-usermenu-pop" role="menu">
             <a className="pa-usermenu-item" href="/profile" role="menuitem">
@@ -128,12 +140,39 @@ export default function UserMenu({
             <button
               type="button"
               role="menuitem"
+              aria-haspopup="menu"
+              aria-expanded={themesOpen}
               className="pa-usermenu-item"
-              onClick={cycleTheme}
+              onClick={() => setThemesOpen((v) => !v)}
               disabled={pending}
             >
-              Theme: <b>{theme}</b>
+              Theme: <b>{THEME_LABELS[theme]}</b>
             </button>
+            {themesOpen && (
+              <div className="pa-usermenu-sublist" role="menu" aria-label="Theme">
+                {THEMES.map((t) => (
+                  <button
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={t === theme}
+                    key={t}
+                    className={
+                      "pa-usermenu-item is-sub" +
+                      (t === theme ? " is-active" : "")
+                    }
+                    onClick={() => pickTheme(t)}
+                    disabled={pending}
+                  >
+                    <span
+                      className="pa-theme-swatch"
+                      data-theme={t}
+                      aria-hidden="true"
+                    />
+                    {THEME_LABELS[t]}
+                  </button>
+                ))}
+              </div>
+            )}
             <button
               type="button"
               role="menuitem"
@@ -141,7 +180,7 @@ export default function UserMenu({
               onClick={cycleDensity}
               disabled={pending}
             >
-              Density: <b>{density}</b>
+              Density: <b>{cap(density)}</b>
             </button>
             <div className="pa-usermenu-sep" role="separator" />
             <button
