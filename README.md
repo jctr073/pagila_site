@@ -98,7 +98,8 @@ src/
     ui/                        Shared primitives and tiny visualizations
   lib/
     db.ts                      Postgres pool and typed query helper
-    preferences.ts             Cookie-backed theme and density helpers
+    themes.ts                  Theme and density values, labels, class map
+    preferences.ts             Server-side cookie reader for preferences
     actions/                   Server actions
     queries/                   SQL query and mutation layer
     types.ts                   Shared DTO types
